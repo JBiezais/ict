@@ -6,7 +6,7 @@
                 class="bg-stone-50 dark:bg-stone-900 flex flex-col justify-between p-8 md:p-12 min-h-[280px] md:min-h-0">
                 <div>
                     <a href="{{ route('home') }}" class="inline-block">
-                        <x-application-logo />
+                        <x-ui.application-logo />
                     </a>
                 </div>
                 <blockquote class="text-stone-600 dark:text-stone-400 text-lg italic">
