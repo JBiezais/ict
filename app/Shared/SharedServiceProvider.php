@@ -11,7 +11,7 @@ class SharedServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
-        $this->loadRoutesFrom(__DIR__ . '/Http/Routes/SharedRoutes.php');
+        $this->loadRoutesFrom(__DIR__.'/Http/Routes/SharedRoutes.php');
 
         $this->loadViewComponentsAs('shared', [
             AppLayout::class,

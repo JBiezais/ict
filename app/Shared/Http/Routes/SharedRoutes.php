@@ -11,4 +11,3 @@ Route::middleware(['web'])->group(function () {
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 });
-
