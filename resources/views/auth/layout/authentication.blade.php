@@ -1,11 +1,12 @@
-<x-shared-guest-layout>
+<x-base-layout>
     <div class="font-sans text-gray-900 dark:text-gray-100 antialiased">
         <div class="min-h-screen grid grid-cols-1 md:grid-cols-2">
             <!-- Left panel -->
-            <div class="bg-stone-50 dark:bg-stone-900 flex flex-col justify-between p-8 md:p-12 min-h-[280px] md:min-h-0">
+            <div
+                class="bg-stone-50 dark:bg-stone-900 flex flex-col justify-between p-8 md:p-12 min-h-[280px] md:min-h-0">
                 <div>
                     <a href="{{ route('home') }}" class="inline-block">
-                        <x-application-logo/>
+                        <x-application-logo />
                     </a>
                 </div>
                 <blockquote class="text-stone-600 dark:text-stone-400 text-lg italic">
@@ -16,9 +17,9 @@
             <!-- Right panel -->
             <div class="bg-white dark:bg-stone-950 flex items-center justify-center p-8">
                 <div class="w-full max-w-md">
-                    @yield('content')
+                    {{ $content }}
                 </div>
             </div>
         </div>
     </div>
-</x-shared-guest-layout>
+</x-base-layout>

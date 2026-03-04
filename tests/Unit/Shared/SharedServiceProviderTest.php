@@ -17,7 +17,7 @@ class SharedServiceProviderTest extends TestCase
     public function test_app_layout_component_can_be_rendered(): void
     {
         $user = \App\User\Database\Models\User::factory()->create();
-        $response = $this->actingAs($user)->get('/profile');
+        $response = $this->actingAs($user)->get('/');
 
         $response->assertOk();
         $this->assertNotEmpty($response->getContent());

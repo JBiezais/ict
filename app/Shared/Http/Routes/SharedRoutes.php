@@ -8,6 +8,6 @@ Route::middleware(['web'])->group(function () {
     })->name('home');
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return redirect()->route('home');
     })->middleware(['auth', 'verified'])->name('dashboard');
 });

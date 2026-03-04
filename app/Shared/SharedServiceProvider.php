@@ -2,8 +2,8 @@
 
 namespace App\Shared;
 
-use App\Shared\Http\Components\AppLayout;
-use App\Shared\Http\Components\GuestLayout;
+use App\Shared\Components\BaseLayout;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class SharedServiceProvider extends ServiceProvider
@@ -13,9 +13,6 @@ class SharedServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
         $this->loadRoutesFrom(__DIR__.'/Http/Routes/SharedRoutes.php');
 
-        $this->loadViewComponentsAs('shared', [
-            AppLayout::class,
-            GuestLayout::class,
-        ]);
+        Blade::component(BaseLayout::class, 'base-layout');
     }
 }
