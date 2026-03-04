@@ -2,7 +2,6 @@
 
 namespace App\User;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class UserServiceProvider extends ServiceProvider

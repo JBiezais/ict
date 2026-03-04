@@ -99,6 +99,7 @@ class LoginRequestTest extends TestCase
             $request->server->set('REMOTE_ADDR', '192.168.1.100');
             $request->setContainer(app());
             $request->validateResolved();
+
             return $request;
         };
 
