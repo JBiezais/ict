@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Shared\Http\Components;
+namespace App\Shared\Components;
 
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
-class GuestLayout extends Component
+class BaseLayout extends Component
 {
     public function render(): View
     {
-        return view('layouts.guest');
+        return view('layouts.base');
     }
 }

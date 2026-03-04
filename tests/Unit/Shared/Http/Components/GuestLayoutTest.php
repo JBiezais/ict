@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Shared\Http\Components;
 
-use App\Shared\Http\Components\GuestLayout;
+use App\Auth\Components\AuthenticationLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,10 +12,10 @@ class GuestLayoutTest extends TestCase
 
     public function test_renders_guest_layout_view(): void
     {
-        $component = new GuestLayout;
+        $component = new AuthenticationLayout;
 
         $view = $component->render();
 
-        $this->assertEquals('layouts.guest', $view->name());
+        $this->assertEquals('auth.layout.authentication', $view->name());
     }
 }

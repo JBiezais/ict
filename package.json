@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "blade:check": "blade-formatter -c resources/views/**/*.blade.php",
+        "blade:check": "blade-formatter -c \"resources/views/**/*.blade.php\"",
+        "blade:fix": "blade-formatter --write \"resources/views/**/*.blade.php\"",
         "build": "vite build",
         "dev": "vite"
     },

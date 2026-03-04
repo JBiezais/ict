@@ -24,12 +24,12 @@ class SharedRoutesTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_dashboard_can_be_rendered_for_authenticated_verified_user(): void
+    public function test_dashboard_redirects_authenticated_verified_user_to_home(): void
     {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/dashboard');
 
-        $response->assertOk();
+        $response->assertRedirect('/');
     }
 }
