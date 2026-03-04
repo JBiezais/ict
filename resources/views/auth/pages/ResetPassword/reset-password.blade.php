@@ -1,4 +1,6 @@
-<x-shared-guest-layout>
+@extends('auth.layout.layout')
+
+@section('content')
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 
@@ -36,4 +38,4 @@
             </x-primary-button>
         </div>
     </form>
-</x-shared-guest-layout>
+@endsection

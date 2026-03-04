@@ -1,5 +1,7 @@
-<x-shared-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+@extends('auth.layout.layout')
+
+@section('content')
+    <div class="mb-4 text-sm text-gray-600 dark:text-stone-400">
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
     </div>
 
@@ -24,4 +26,4 @@
             </x-primary-button>
         </div>
     </form>
-</x-shared-guest-layout>
+@endsection
