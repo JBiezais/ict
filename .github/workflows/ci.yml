@@ -124,7 +124,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-assets
-          path: .
+          path: public
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
