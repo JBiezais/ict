@@ -14,8 +14,8 @@
             <!-- Email Address -->
             <div class="mt-4">
                 <x-form.input-label for="email" :value="__('Email')" />
-                <x-form.text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
-                    required autocomplete="username" />
+                <x-form.text-input id="email" class="block mt-1 w-full" type="email" name="email"
+                    :value="old('email')" required autocomplete="username" />
                 <x-form.input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
