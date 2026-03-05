@@ -8,8 +8,8 @@ use App\Post\Http\Requests\PostBrowseRequest;
 use App\Post\Services\PostIndex\DTO\PostIndexDto;
 use App\Post\Services\PostIndex\PostIndexService;
 use App\Shared\Http\Controllers\Controller;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 class PostPublicController extends Controller

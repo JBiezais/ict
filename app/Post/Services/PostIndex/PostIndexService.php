@@ -4,11 +4,11 @@ namespace App\Post\Services\PostIndex;
 
 use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use App\Post\Services\PostIndex\DTO\PostDto;
 use App\Post\Services\PostIndex\DTO\PostIndexDto;
 use App\Post\Services\PostIndex\DTO\PostIndexResultDto;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class PostIndexService
 {
@@ -99,11 +99,15 @@ class PostIndexService
     private function buildPrefixTsQuery(string $search): ?string
     {
         $terms = preg_split('/\s+/', trim($search), -1, PREG_SPLIT_NO_EMPTY);
+        if ($terms === false || $terms === []) {
+            return null;
+        }
+
         $sanitized = [];
 
         foreach ($terms as $term) {
             $cleaned = preg_replace('/[^\p{L}\p{N}\-\']/u', '', $term);
-            if ($cleaned !== '') {
+            if (is_string($cleaned) && $cleaned !== '') {
                 $sanitized[] = $cleaned;
             }
         }
@@ -112,6 +116,6 @@ class PostIndexService
             return null;
         }
 
-        return implode(' & ', array_map(fn (string $t) => $t . ':*', $sanitized));
+        return implode(' & ', array_map(fn (?string $t): string => ($t ?? '').':*', $sanitized));
     }
 }

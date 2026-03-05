@@ -32,11 +32,13 @@ class PostIndexDto extends Data
             throw new \RuntimeException('Authenticated user is required.');
         }
 
+        $categoryIds = $request->validated('category_ids', []);
+
         return new self(
             userId: $user->id,
             page: self::parsePage($request->validated('page', 1)),
             perPage: self::parsePerPage($request->validated('per_page', 10)),
-            categoryIds: self::parseCategoryIds($request->validated('category_ids', [])),
+            categoryIds: self::parseCategoryIds(is_array($categoryIds) ? $categoryIds : []),
             dateFrom: self::parseDate($request->validated('date_from')),
             dateTo: self::parseDate($request->validated('date_to')),
             sort: self::parseSort($request->validated('sort', 'date')),
@@ -47,11 +49,13 @@ class PostIndexDto extends Data
 
     public static function fromBrowseRequest(PostBrowseRequest $request): self
     {
+        $categoryIds = $request->validated('category_ids', []);
+
         return new self(
             userId: null,
             page: self::parsePage($request->validated('page', 1)),
             perPage: 10,
-            categoryIds: self::parseCategoryIds($request->validated('category_ids', [])),
+            categoryIds: self::parseCategoryIds(is_array($categoryIds) ? $categoryIds : []),
             dateFrom: self::parseDate($request->validated('date_from')),
             dateTo: self::parseDate($request->validated('date_to')),
             sort: self::parseSort($request->validated('sort', 'date')),
@@ -71,10 +75,21 @@ class PostIndexDto extends Data
         return filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]) ?: 10;
     }
 
-    /** @return list<int> */
+    /**
+     * @param  array<mixed>  $values
+     * @return list<int>
+     */
     private static function parseCategoryIds(array $values): array
     {
-        return collect($values)->map(fn ($v) => (int) $v)->filter()->values()->all();
+        $result = [];
+        foreach ($values as $v) {
+            $id = is_numeric($v) ? (int) $v : 0;
+            if ($id !== 0) {
+                $result[] = $id;
+            }
+        }
+
+        return $result;
     }
 
     private static function parseDate(mixed $value): ?string
@@ -97,7 +112,8 @@ class PostIndexDto extends Data
         if (! is_string($value)) {
             return null;
         }
-        $trimmed = trim(preg_replace('/\s+/', ' ', $value));
+        $replaced = preg_replace('/\s+/', ' ', $value);
+        $trimmed = is_string($replaced) ? trim($replaced) : '';
 
         return $trimmed === '' || strlen($trimmed) < 2 ? null : $trimmed;
     }

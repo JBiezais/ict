@@ -36,7 +36,7 @@ class PostBrowseRequestTest extends TestCase
 
     public function test_prepare_for_validation_trims_and_collapses_search_whitespace(): void
     {
-        $response = $this->get('/?' . http_build_query(['search' => '  foo   bar  ']));
+        $response = $this->get('/?'.http_build_query(['search' => '  foo   bar  ']));
 
         $response->assertOk();
         $response->assertViewHas('currentFilters');

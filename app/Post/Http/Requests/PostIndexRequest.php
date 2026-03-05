@@ -26,8 +26,10 @@ class PostIndexRequest extends FormRequest
         if ($this->has('date_to') && $this->date_to === '') {
             $replace['date_to'] = null;
         }
-        if ($this->has('search') && is_string($this->search)) {
-            $replace['search'] = trim(preg_replace('/\s+/', ' ', $this->search));
+        $search = $this->input('search');
+        if ($this->has('search') && is_string($search)) {
+            $replaced = preg_replace('/\s+/', ' ', $search);
+            $replace['search'] = trim(is_string($replaced) ? $replaced : $search);
         }
         if ($replace !== []) {
             $this->merge($replace);
