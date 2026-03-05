@@ -29,6 +29,6 @@ class EmailVerificationNotificationControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post('/email/verification-notification');
 
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('my-posts.posts.index', absolute: false));
     }
 }

@@ -18,7 +18,7 @@ class EmailVerificationPromptController extends Controller
         abort_if($user === null, 403);
 
         return $user->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', absolute: false))
+                    ? redirect()->intended(route('my-posts.posts.index', absolute: false))
                     : view('auth.pages.verify-email');
     }
 }

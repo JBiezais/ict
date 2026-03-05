@@ -18,13 +18,13 @@ class VerifyEmailController extends Controller
         abort_if($user === null, 403);
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->intended(route('my-posts.posts.index', absolute: false).'?verified=1');
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        return redirect()->intended(route('my-posts.posts.index', absolute: false).'?verified=1');
     }
 }

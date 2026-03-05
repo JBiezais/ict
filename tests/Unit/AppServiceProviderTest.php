@@ -3,15 +3,13 @@
 namespace Tests\Unit;
 
 use App\AppServiceProvider;
-use Illuminate\Foundation\Application;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class AppServiceProviderTest extends TestCase
 {
     public function test_register_does_not_throw(): void
     {
-        $app = $this->createMock(Application::class);
-        $provider = new AppServiceProvider($app);
+        $provider = $this->app->getProvider(AppServiceProvider::class);
 
         $provider->register();
 
@@ -20,8 +18,7 @@ class AppServiceProviderTest extends TestCase
 
     public function test_boot_does_not_throw(): void
     {
-        $app = $this->createMock(Application::class);
-        $provider = new AppServiceProvider($app);
+        $provider = $this->app->getProvider(AppServiceProvider::class);
 
         $provider->boot();
 

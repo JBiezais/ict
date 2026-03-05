@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\User\Database\Models;
 
+use App\Post\Database\Models\Post;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -33,5 +34,20 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $user->email_verified_at);
         $this->assertTrue(Hash::check('password', $user->password));
+    }
+
+    public function test_posts_relationship_returns_has_many(): void
+    {
+        $user = new User;
+
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $user->posts());
+    }
+
+    public function test_user_has_many_posts(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->count(2)->create(['user_id' => $user->id]);
+
+        $this->assertCount(2, $user->posts);
     }
 }

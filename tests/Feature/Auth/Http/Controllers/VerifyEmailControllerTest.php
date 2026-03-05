@@ -29,7 +29,7 @@ class VerifyEmailControllerTest extends TestCase
 
         Event::assertDispatched(Verified::class);
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
-        $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+        $response->assertRedirect(route('my-posts.posts.index', absolute: false).'?verified=1');
     }
 
     public function test_user_is_redirected_when_email_already_verified(): void
@@ -44,7 +44,7 @@ class VerifyEmailControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get($verificationUrl);
 
-        $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+        $response->assertRedirect(route('my-posts.posts.index', absolute: false).'?verified=1');
     }
 
     public function test_email_is_not_verified_with_invalid_hash(): void

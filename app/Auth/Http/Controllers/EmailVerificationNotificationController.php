@@ -17,7 +17,7 @@ class EmailVerificationNotificationController extends Controller
         abort_if($user === null, 403);
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('my-posts.posts.index', absolute: false));
         }
 
         $user->sendEmailVerificationNotification();
