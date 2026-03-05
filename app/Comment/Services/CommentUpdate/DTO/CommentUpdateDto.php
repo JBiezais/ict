@@ -14,6 +14,9 @@ class CommentUpdateDto extends Data
     public static function fromRequest(CommentUpdateRequest $request): self
     {
         $content = $request->validated('content');
+        if (! is_string($content)) {
+            throw new \InvalidArgumentException('Content must be a string.');
+        }
 
         return new self(content: $content);
     }

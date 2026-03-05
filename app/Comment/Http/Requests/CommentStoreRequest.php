@@ -47,7 +47,7 @@ class CommentStoreRequest extends FormRequest
                         }
                         $depth = 0;
                         $current = $comment;
-                        while ($current->parent_id !== null) {
+                        while ($current !== null && $current->parent_id !== null) {
                             $depth++;
                             $current = $current->parent;
                         }

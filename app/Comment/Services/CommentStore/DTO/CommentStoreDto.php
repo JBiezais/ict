@@ -23,6 +23,9 @@ class CommentStoreDto extends Data
         }
 
         $content = $request->validated('content');
+        if (! is_string($content)) {
+            throw new \InvalidArgumentException('Content must be a string.');
+        }
         $parentId = $request->validated('parent_id');
         $parentId = $parentId !== null && is_numeric($parentId) ? (int) $parentId : null;
 
