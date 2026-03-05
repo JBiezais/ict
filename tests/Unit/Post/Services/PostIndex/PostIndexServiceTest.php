@@ -315,4 +315,17 @@ class PostIndexServiceTest extends TestCase
         $this->assertCount(1, $result->items);
         $this->assertEquals('Some Post', $result->items[0]->title);
     }
+
+    public function test_build_prefix_tsquery_returns_null_for_whitespace_only_search(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->create(['user_id' => $user->id, 'title' => 'Some Post', 'content' => 'Content.']);
+
+        $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: '   ');
+        $service = new PostIndexService;
+        $result = $service->execute($dto);
+
+        $this->assertCount(1, $result->items);
+        $this->assertEquals('Some Post', $result->items[0]->title);
+    }
 }
