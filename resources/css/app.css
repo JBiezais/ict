@@ -7,3 +7,118 @@
         @apply transition-colors duration-200;
     }
 }
+
+/* Filter date picker - app theme (light/dark) */
+.flatpickr-calendar.filter-datepicker {
+    @apply rounded-lg border border-neutral-200 dark:border-zinc-600 shadow-lg;
+    background: white;
+    padding: 16px;
+    box-sizing: border-box;
+    width: 344px; /* extra width so all 7 days fit with padding */
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-days {
+    width: 312px !important;
+    min-width: 312px !important;
+}
+.flatpickr-calendar.filter-datepicker .dayContainer {
+    width: 304px !important; /* fits inside flatpickr-days (312 - 8px padding) */
+    min-width: 304px !important;
+    max-width: 304px !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-innerContainer {
+    padding: 8px 0;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-days {
+    padding: 0 4px; /* reduced so dayContainer fits */
+}
+.flatpickr-calendar.filter-datepicker .dayContainer {
+    padding: 4px 0;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-months {
+    padding: 0 4px 8px;
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    position: relative;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-prev-month,
+.flatpickr-calendar.filter-datepicker .flatpickr-next-month {
+    top: 50%;
+    margin-top: 0;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    transform: translateY(-50%);
+}
+.flatpickr-calendar.filter-datepicker.dark {
+    @apply border-zinc-600;
+    background: rgb(39 39 42);
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-months .flatpickr-month {
+    @apply bg-transparent text-neutral-700 dark:text-zinc-200;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-current-month .flatpickr-monthDropdown-months {
+    @apply bg-white dark:bg-zinc-800 text-neutral-900 dark:text-zinc-100 border-neutral-200 dark:border-zinc-600;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-weekdays span {
+    @apply text-neutral-500 dark:text-zinc-400;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-weekdays,
+.flatpickr-calendar.filter-datepicker .flatpickr-weekdaycontainer {
+    width: 304px !important;
+    max-width: 304px !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.prevMonthDay,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.nextMonthDay {
+    @apply text-neutral-700 dark:text-zinc-300;
+    border: none !important;
+    border-width: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day:hover {
+    @apply bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-200;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day.selected,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.startRange,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.endRange {
+    @apply bg-emerald-600 text-white hover:bg-emerald-600 hover:text-white rounded-none;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day.inRange {
+    @apply bg-emerald-100 dark:bg-emerald-900/50 text-emerald-900 dark:text-emerald-100 rounded-none;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+/* Remove separator line between multi-month (can show as grid line in single-month) */
+.flatpickr-calendar.filter-datepicker .dayContainer + .dayContainer {
+    box-shadow: none !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day.startRange,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.endRange,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.startRange.endRange,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.selected.startRange,
+.flatpickr-calendar.filter-datepicker .flatpickr-day.selected.endRange {
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-day.flatpickr-disabled {
+    @apply text-neutral-300 dark:text-zinc-600;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-prev-month svg,
+.flatpickr-calendar.filter-datepicker .flatpickr-next-month svg {
+    fill: currentColor;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-prev-month,
+.flatpickr-calendar.filter-datepicker .flatpickr-next-month {
+    @apply text-neutral-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400;
+}
+.flatpickr-calendar.filter-datepicker .flatpickr-input {
+    @apply border border-neutral-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 rounded-md shadow-sm text-sm py-2 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500 dark:focus:ring-emerald-400;
+}

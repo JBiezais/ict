@@ -11,7 +11,12 @@ import './bootstrap';
 })();
 
 import Alpine from 'alpinejs';
+import { initDateRangePickers } from './date-range-picker';
+import { liveSearch } from './live-search';
 
 window.Alpine = Alpine;
+Alpine.data('liveSearch', liveSearch);
 
 Alpine.start();
+
+initDateRangePickers();

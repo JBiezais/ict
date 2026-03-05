@@ -3,8 +3,12 @@
 namespace App\Post\Http\Controllers;
 
 use App\Post\Database\Models\Post;
+use App\Post\Http\Requests\PostBrowseRequest;
+use App\Post\Services\PostIndex\DTO\PostIndexDto;
+use App\Post\Services\PostIndex\PostIndexService;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 class PostPublicController extends Controller
@@ -18,12 +22,23 @@ class PostPublicController extends Controller
     /**
      * Display a listing of all posts (public homepage).
      */
-    public function index(): View
+    public function index(PostBrowseRequest $request, PostIndexService $postIndexService): View
     {
-        $posts = Post::with('user', 'categories')
-            ->withCount('comments')
-            ->latest()
-            ->paginate(10);
+        $dto = PostIndexDto::fromBrowseRequest($request);
+        $result = $postIndexService->execute($dto);
+
+        $posts = new LengthAwarePaginator(
+            $result->items,
+            $result->total,
+            $result->perPage,
+            $result->currentPage,
+            ['path' => $request->url(), 'pageName' => 'page']
+        );
+        $posts->appends(collect($request->query())->forget('_fragment')->all());
+
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
+            return view('posts.components.browse-list', compact('posts'));
+        }
 
         return view('posts.pages.browse', compact('posts'));
     }

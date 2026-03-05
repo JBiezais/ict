@@ -38,6 +38,11 @@ class PostController extends Controller
             $result->currentPage,
             ['path' => $request->url(), 'pageName' => 'page']
         );
+        $posts->appends(collect($request->query())->forget('_fragment')->all());
+
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
+            return view('posts.components.manage-list', compact('posts'));
+        }
 
         return view('posts.pages.manage.index', compact('posts'));
     }

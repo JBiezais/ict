@@ -4,7 +4,7 @@ namespace App\Post\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostIndexRequest extends FormRequest
+class PostBrowseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -45,7 +45,6 @@ class PostIndexRequest extends FormRequest
     {
         return [
             'page' => ['sometimes', 'integer', 'min:1'],
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'category_ids' => ['sometimes', 'array'],
             'category_ids.*' => ['integer', 'exists:categories,id'],
             'date_from' => ['nullable', 'date'],

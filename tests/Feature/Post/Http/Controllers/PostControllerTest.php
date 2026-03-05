@@ -66,6 +66,19 @@ class PostControllerTest extends TestCase
         $response->assertSee('Uncategorized');
     }
 
+    public function test_posts_index_returns_partial_fragment_when_ajax_request_with_fragment(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->create(['user_id' => $user->id, 'title' => 'Fragment Post']);
+
+        $response = $this->actingAs($user)
+            ->withHeader('X-Requested-With', 'XMLHttpRequest')
+            ->get(route('my-posts.posts.index', ['_fragment' => '1']));
+
+        $response->assertOk();
+        $response->assertViewIs('posts.components.manage-list');
+    }
+
     public function test_posts_create_renders(): void
     {
         $user = User::factory()->create();
