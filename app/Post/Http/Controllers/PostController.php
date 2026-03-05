@@ -39,7 +39,18 @@ class PostController extends Controller
             ['path' => $request->url(), 'pageName' => 'page']
         );
 
-        return view('posts.pages.manage.index', compact('posts'));
+        $posts->withQueryString();
+
+        $categories = Category::orderBy('name')->get();
+        $currentFilters = [
+            'category_ids' => $dto->categoryIds,
+            'include_uncategorized' => $dto->includeUncategorized,
+            'date_from' => $dto->dateFrom,
+            'date_to' => $dto->dateTo,
+            'sort' => $dto->sort,
+        ];
+
+        return view('posts.pages.manage.index', compact('posts', 'categories', 'currentFilters'));
     }
 
     /**

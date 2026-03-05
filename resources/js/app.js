@@ -11,7 +11,10 @@ import './bootstrap';
 })();
 
 import Alpine from 'alpinejs';
+import { initDateRangePickers } from './date-range-picker';
 
 window.Alpine = Alpine;
 
 Alpine.start();
+
+initDateRangePickers();

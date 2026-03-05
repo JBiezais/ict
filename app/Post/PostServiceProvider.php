@@ -14,6 +14,11 @@ class PostServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Blade::anonymousComponentPath(
+            resource_path('views/posts/components'),
+            'posts'
+        );
+
+        Blade::anonymousComponentPath(
             resource_path('views/posts/pages/manage/components'),
             'posts.pages.manage'
         );

@@ -20,5 +20,6 @@ class PostDto extends Data
         public readonly int $commentsCount,
         /** @var \Illuminate\Support\Collection<int, \App\Category\Database\Models\Category> */
         public readonly Collection $categories,
+        public readonly ?string $userName = null,
     ) {}
 }

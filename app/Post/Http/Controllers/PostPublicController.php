@@ -2,8 +2,13 @@
 
 namespace App\Post\Http\Controllers;
 
+use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
+use App\Post\Http\Requests\PostBrowseRequest;
+use App\Post\Services\PostIndex\DTO\PostIndexDto;
+use App\Post\Services\PostIndex\PostIndexService;
 use App\Shared\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\View\View;
 
@@ -18,14 +23,30 @@ class PostPublicController extends Controller
     /**
      * Display a listing of all posts (public homepage).
      */
-    public function index(): View
+    public function index(PostBrowseRequest $request, PostIndexService $postIndexService): View
     {
-        $posts = Post::with('user', 'categories')
-            ->withCount('comments')
-            ->latest()
-            ->paginate(10);
+        $categories = Category::orderBy('name')->get();
+        $dto = PostIndexDto::fromBrowseRequest($request);
+        $result = $postIndexService->execute($dto);
 
-        return view('posts.pages.browse', compact('posts'));
+        $posts = new LengthAwarePaginator(
+            $result->items,
+            $result->total,
+            $result->perPage,
+            $result->currentPage,
+            ['path' => $request->url(), 'pageName' => 'page']
+        );
+        $posts->withQueryString();
+
+        $currentFilters = [
+            'category_ids' => $dto->categoryIds,
+            'include_uncategorized' => $dto->includeUncategorized,
+            'date_from' => $dto->dateFrom,
+            'date_to' => $dto->dateTo,
+            'sort' => $dto->sort,
+        ];
+
+        return view('posts.pages.browse', compact('posts', 'categories', 'currentFilters'));
     }
 
     /**
