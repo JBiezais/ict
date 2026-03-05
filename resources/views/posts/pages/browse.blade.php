@@ -7,6 +7,7 @@
                 <article
                     class="group py-6 border-b border-neutral-200 dark:border-zinc-700 last:border-b-0 last:pb-0 first:pt-0">
                     <a href="{{ route('posts.show', $post) }}" class="block cursor-pointer">
+                        <x-post-category-labels :categories="$post->categories" />
                         <div class="flex items-baseline gap-2 text-xs text-neutral-500 dark:text-zinc-400 mb-2">
                             <span>{{ $post->user->name }}</span>
                             <span aria-hidden="true">·</span>

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Post\Http\Controllers;
 
+use App\Category\Database\Models\Category;
 use App\Comment\Database\Models\Comment;
 use App\Post\Database\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -100,5 +101,49 @@ class PostPublicControllerTest extends TestCase
         $response = $this->get('/');
         $response->assertOk();
         $response->assertSee('Index Post');
+    }
+
+    public function test_browse_shows_category_labels_for_categorized_posts(): void
+    {
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $post = Post::factory()->create(['title' => 'Categorized Post', 'content' => 'Content']);
+        $post->categories()->attach($tech->id);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('Tech');
+    }
+
+    public function test_browse_shows_uncategorized_when_post_has_no_categories(): void
+    {
+        $post = Post::factory()->create(['title' => 'No Categories Post', 'content' => 'Content']);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('Uncategorized');
+    }
+
+    public function test_show_displays_category_labels(): void
+    {
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $post = Post::factory()->create(['title' => 'Show Categories Post', 'content' => 'Content']);
+        $post->categories()->attach($tech->id);
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertOk();
+        $response->assertSee('Tech');
+    }
+
+    public function test_show_displays_uncategorized_when_post_has_no_categories(): void
+    {
+        $post = Post::factory()->create(['title' => 'Show No Categories', 'content' => 'Content']);
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertOk();
+        $response->assertSee('Uncategorized');
     }
 }

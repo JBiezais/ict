@@ -19,6 +19,12 @@
             <x-form.input-error :messages="$errors->get('content')" class="mt-2" />
         </div>
 
+        <div class="mt-4">
+            <x-form.input-label :value="__('Categories')" />
+            <x-form.category-tag-input :categories="$categories" :selected="old('category_ids', [])" />
+            <x-form.input-error :messages="$errors->get('category_ids')" class="mt-2" />
+        </div>
+
         <div class="mt-6 flex items-center gap-4">
             <x-button.primary-button>{{ __('Create Post') }}</x-button.primary-button>
             <a href="{{ route('my-posts.posts.index') }}"

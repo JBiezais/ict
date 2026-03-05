@@ -30,4 +30,11 @@ class PostTest extends TestCase
 
         $this->assertInstanceOf(\Database\Factories\PostFactory::class, $factory);
     }
+
+    public function test_categories_relationship_returns_belongs_to_many(): void
+    {
+        $post = new Post;
+
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $post->categories());
+    }
 }

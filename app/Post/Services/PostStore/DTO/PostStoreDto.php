@@ -11,6 +11,8 @@ class PostStoreDto extends Data
         public readonly int $userId,
         public readonly string $title,
         public readonly string $content,
+        /** @var list<int> */
+        public readonly array $categoryIds,
     ) {}
 
     public static function fromRequest(PostStoreRequest $request): self
@@ -26,10 +28,18 @@ class PostStoreDto extends Data
             throw new \InvalidArgumentException('Title and content must be strings.');
         }
 
+        $categoryIds = $request->validated('category_ids') ?? [];
+        $categoryIds = array_values(array_filter(array_map(
+            /** @phpstan-ignore cast.int */
+            fn (mixed $v): int => (int) $v,
+            is_array($categoryIds) ? $categoryIds : []
+        )));
+
         return new self(
             userId: $user->id,
             title: $title,
             content: $content,
+            categoryIds: $categoryIds,
         );
     }
 }

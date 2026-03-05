@@ -78,5 +78,7 @@ class PostUpdateRequestTest extends TestCase
 
         $this->assertEquals(['required', 'string', 'max:255'], $rules['title']);
         $this->assertEquals(['required', 'string'], $rules['content']);
+        $this->assertEquals(['nullable', 'array'], $rules['category_ids']);
+        $this->assertEquals(['integer', 'exists:categories,id'], $rules['category_ids.*']);
     }
 }

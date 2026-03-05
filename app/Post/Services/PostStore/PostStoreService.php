@@ -9,10 +9,12 @@ class PostStoreService
 {
     public function execute(PostStoreDto $dto): void
     {
-        Post::query()->create([
+        $post = Post::query()->create([
             'user_id' => $dto->userId,
             'title' => $dto->title,
             'content' => $dto->content,
         ]);
+
+        $post->categories()->sync($dto->categoryIds);
     }
 }
