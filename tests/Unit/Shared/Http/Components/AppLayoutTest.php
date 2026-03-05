@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Shared\Http\Components;
 
-use App\Shared\Components\BaseLayout;
+use App\Shared\Components\AppLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,10 +12,10 @@ class AppLayoutTest extends TestCase
 
     public function test_renders_app_layout_view(): void
     {
-        $component = new BaseLayout;
+        $component = new AppLayout;
 
         $view = $component->render();
 
-        $this->assertEquals('layouts.base', $view->name());
+        $this->assertEquals('layouts.app', $view->name());
     }
 }

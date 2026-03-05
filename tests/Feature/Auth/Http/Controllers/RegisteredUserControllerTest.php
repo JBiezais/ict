@@ -26,7 +26,7 @@ class RegisteredUserControllerTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('my-posts.posts.index', absolute: false));
     }
 
     public function test_registration_fails_with_validation_errors(): void

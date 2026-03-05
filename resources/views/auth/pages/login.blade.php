@@ -28,15 +28,15 @@
             <div class="block mt-4">
                 <label for="remember_me" class="inline-flex items-center">
                     <input id="remember_me" type="checkbox"
-                        class="rounded dark:bg-stone-900 dark:border-stone-600 border-gray-300 text-stone-600 dark:text-stone-400 shadow-sm focus:ring-stone-500 dark:focus:ring-stone-400 dark:focus:ring-offset-stone-950"
+                        class="rounded border-neutral-300 dark:border-zinc-600 dark:bg-zinc-800 text-neutral-600 dark:text-zinc-400 shadow-sm focus:ring-emerald-500 dark:focus:ring-emerald-400 dark:focus:ring-offset-zinc-900"
                         name="remember">
-                    <span class="ms-2 text-sm text-gray-600 dark:text-stone-400">{{ __('Remember me') }}</span>
+                    <span class="ms-2 text-sm text-neutral-600 dark:text-zinc-400">{{ __('Remember me') }}</span>
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 dark:text-stone-400 hover:text-gray-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500 dark:focus:ring-stone-400 dark:focus:ring-offset-stone-950"
+                    <a class="underline text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 dark:focus:ring-offset-zinc-900"
                         href="{{ route('password.request') }}">
                         {{ __('Forgot your password?') }}
                     </a>
@@ -47,5 +47,14 @@
                 </x-button.primary-button>
             </div>
         </form>
+
+        @if (Route::has('register'))
+            <div class="mt-6 pt-6 border-t border-neutral-200 dark:border-zinc-700">
+                <a href="{{ route('register') }}"
+                    class="block w-full text-center px-4 py-3 text-sm font-semibold text-neutral-700 dark:text-zinc-300 bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 rounded-md hover:bg-neutral-200 dark:hover:bg-zinc-700 hover:text-neutral-900 dark:hover:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 transition-colors duration-200">
+                    {{ __('Register') }}
+                </a>
+            </div>
+        @endif
     </x-slot>
 </x-authentication-layout>

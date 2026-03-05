@@ -9,11 +9,6 @@ class SharedServiceProviderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_shared_routes_are_registered(): void
-    {
-        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('dashboard'));
-    }
-
     public function test_app_layout_component_can_be_rendered(): void
     {
         $user = \App\User\Database\Models\User::factory()->create();

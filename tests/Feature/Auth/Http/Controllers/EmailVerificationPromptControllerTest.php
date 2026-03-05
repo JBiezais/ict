@@ -19,12 +19,12 @@ class EmailVerificationPromptControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_user_is_redirected_to_dashboard_when_already_verified(): void
+    public function test_user_is_redirected_to_my_posts_when_already_verified(): void
     {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/verify-email');
 
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('my-posts.posts.index', absolute: false));
     }
 }

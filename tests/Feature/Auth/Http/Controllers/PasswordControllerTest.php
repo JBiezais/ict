@@ -17,7 +17,7 @@ class PasswordControllerTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from('/dashboard')
+            ->from(route('my-posts.posts.index'))
             ->put('/password', [
                 'current_password' => 'password',
                 'password' => 'new-password',
@@ -26,7 +26,7 @@ class PasswordControllerTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/dashboard');
+            ->assertRedirect(route('my-posts.posts.index'));
 
         $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
     }
@@ -37,7 +37,7 @@ class PasswordControllerTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from('/dashboard')
+            ->from(route('my-posts.posts.index'))
             ->put('/password', [
                 'current_password' => 'wrong-password',
                 'password' => 'new-password',
@@ -46,6 +46,6 @@ class PasswordControllerTest extends TestCase
 
         $response
             ->assertSessionHasErrorsIn('updatePassword', 'current_password')
-            ->assertRedirect('/dashboard');
+            ->assertRedirect(route('my-posts.posts.index'));
     }
 }
