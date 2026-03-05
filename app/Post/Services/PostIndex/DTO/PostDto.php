@@ -16,5 +16,6 @@ class PostDto extends Data
         public readonly string $content,
         public readonly int $userId,
         public readonly CarbonInterface $createdAt,
+        public readonly int $commentsCount,
     ) {}
 }

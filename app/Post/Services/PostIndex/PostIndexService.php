@@ -12,6 +12,7 @@ class PostIndexService
     public function execute(PostIndexDto $dto): PostIndexResultDto
     {
         $paginator = Post::where('user_id', $dto->userId)
+            ->withCount('comments')
             ->latest()
             ->paginate($dto->perPage, ['*'], 'page', $dto->page);
 
