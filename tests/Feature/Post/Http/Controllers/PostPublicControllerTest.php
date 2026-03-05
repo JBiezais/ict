@@ -103,6 +103,17 @@ class PostPublicControllerTest extends TestCase
         $response->assertSee('Index Post');
     }
 
+    public function test_browse_returns_partial_fragment_when_ajax_request_with_fragment(): void
+    {
+        Post::factory()->create(['title' => 'Fragment Browse Post', 'content' => 'Content']);
+
+        $response = $this->withHeader('X-Requested-With', 'XMLHttpRequest')
+            ->get('/?_fragment=1');
+
+        $response->assertOk();
+        $response->assertViewIs('posts.partials.browse-list');
+    }
+
     public function test_browse_shows_category_labels_for_categorized_posts(): void
     {
         $tech = Category::factory()->create(['name' => 'Tech']);
