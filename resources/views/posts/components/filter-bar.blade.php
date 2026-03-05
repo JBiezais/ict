@@ -2,6 +2,7 @@
     'categories',
     'baseUrl',
     'currentFilters' => [],
+    'listSelector' => '[data-posts-list]',
 ])
 
 @php
@@ -12,6 +13,7 @@
     $dateFrom = $currentFilters['date_from'] ?? '';
     $dateTo = $currentFilters['date_to'] ?? '';
     $sort = $currentFilters['sort'] ?? 'date';
+    $search = $currentFilters['search'] ?? '';
     $dateRangeValue = '';
     if ($dateFrom && $dateTo) {
         $from = \Carbon\Carbon::createFromFormat('Y-m-d', $dateFrom);
@@ -25,7 +27,8 @@
         count($selectedCategoryIds) < count($allCategoryIds)
         || ! $includeUncategorized
         || $dateFrom !== ''
-        || $dateTo !== '';
+        || $dateTo !== ''
+        || $search !== '';
     $hasActiveSort = $sort !== 'date';
 @endphp
 
@@ -56,6 +59,7 @@
         <x-slot name="content">
             <form method="GET" action="{{ $baseUrl }}" id="filter-form">
                 <input type="hidden" name="sort" value="{{ $sort }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 @if ($categories->isNotEmpty())
                     <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-zinc-400 mb-2">{{ __('Categories') }}</p>
                     <div class="space-y-2 mb-4">
@@ -119,6 +123,7 @@
                 <input type="hidden" name="include_uncategorized" value="{{ $includeUncategorized ? '1' : '0' }}">
                 <input type="hidden" name="date_from" value="{{ $dateFrom }}">
                 <input type="hidden" name="date_to" value="{{ $dateTo }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button type="submit" name="sort" value="date"
                     class="block w-full px-4 py-2 text-start text-sm {{ $sort === 'date' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 font-medium' : 'text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700' }}">
                     {{ __('Newest first') }}
@@ -138,4 +143,28 @@
             </form>
         </x-slot>
     </x-nav.dropdown>
+
+    {{-- Search --}}
+    <div
+        x-data="liveSearch({ baseUrl: {{ Js::from($baseUrl) }}, listSelector: {{ Js::from($listSelector) }}, minLength: 2, debounceMs: 300 })"
+    >
+        <form x-ref="searchForm" method="GET" action="{{ $baseUrl }}" class="flex-1 min-w-0 max-w-xl relative" @submit.prevent="handleSubmit($event)">
+            @foreach ($selectedCategoryIds as $id)
+                <input type="hidden" name="category_ids[]" value="{{ $id }}">
+            @endforeach
+            <input type="hidden" name="include_uncategorized" value="{{ $includeUncategorized ? '1' : '0' }}">
+            <input type="hidden" name="date_from" value="{{ $dateFrom }}">
+            <input type="hidden" name="date_to" value="{{ $dateTo }}">
+            <input type="hidden" name="sort" value="{{ $sort }}">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-zinc-500">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </span>
+            <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('Search posts…') }}"
+                aria-label="{{ __('Search posts') }}"
+                class="w-full border border-neutral-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500 dark:focus:ring-emerald-400 rounded-md shadow-sm text-sm py-2 pl-9 pr-3 bg-white dark:bg-zinc-800"
+                @input="handleInput()">
+        </form>
+    </div>
 </div>

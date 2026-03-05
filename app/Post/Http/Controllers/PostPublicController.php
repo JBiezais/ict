@@ -36,7 +36,7 @@ class PostPublicController extends Controller
             $result->currentPage,
             ['path' => $request->url(), 'pageName' => 'page']
         );
-        $posts->withQueryString();
+        $posts->appends(collect($request->query())->forget('_fragment')->all());
 
         $currentFilters = [
             'category_ids' => $dto->categoryIds,
@@ -44,7 +44,12 @@ class PostPublicController extends Controller
             'date_from' => $dto->dateFrom,
             'date_to' => $dto->dateTo,
             'sort' => $dto->sort,
+            'search' => $dto->search,
         ];
+
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
+            return view('posts.partials.browse-list', compact('posts'));
+        }
 
         return view('posts.pages.browse', compact('posts', 'categories', 'currentFilters'));
     }

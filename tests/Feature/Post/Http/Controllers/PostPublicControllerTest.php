@@ -146,4 +146,40 @@ class PostPublicControllerTest extends TestCase
         $response->assertOk();
         $response->assertSee('Uncategorized');
     }
+
+    public function test_browse_filters_by_search_when_postgresql_fulltext_available(): void
+    {
+        if (\Illuminate\Support\Facades\DB::connection()->getDriverName() !== 'pgsql'
+            || ! \Illuminate\Support\Facades\Schema::hasColumn('posts', 'search_vector')) {
+            $this->markTestSkipped('PostgreSQL full-text search requires search_vector column.');
+        }
+
+        Post::factory()->create(['title' => 'Laravel Tutorial', 'content' => 'Learn the Laravel framework.']);
+        Post::factory()->create(['title' => 'PHP Guide', 'content' => 'PHP programming.']);
+        Post::factory()->create(['title' => 'Laravel Testing', 'content' => 'Testing in Laravel.']);
+
+        $response = $this->get('/?search=Laravel');
+
+        $response->assertOk();
+        $response->assertSee('Laravel Tutorial');
+        $response->assertSee('Laravel Testing');
+        $response->assertDontSee('PHP Guide');
+    }
+
+    public function test_browse_search_supports_prefix_matching(): void
+    {
+        if (\Illuminate\Support\Facades\DB::connection()->getDriverName() !== 'pgsql'
+            || ! \Illuminate\Support\Facades\Schema::hasColumn('posts', 'search_vector')) {
+            $this->markTestSkipped('PostgreSQL full-text search requires search_vector column.');
+        }
+
+        Post::factory()->create(['title' => 'Prefix Match Post', 'content' => 'Content with veniam and aspernatur.']);
+        Post::factory()->create(['title' => 'No Match', 'content' => 'Other content.']);
+
+        $response = $this->get('/?search=veni');
+
+        $response->assertOk();
+        $response->assertSee('Prefix Match Post');
+        $response->assertDontSee('No Match');
+    }
 }

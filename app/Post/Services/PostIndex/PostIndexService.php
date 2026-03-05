@@ -4,6 +4,8 @@ namespace App\Post\Services\PostIndex;
 
 use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Post\Services\PostIndex\DTO\PostDto;
 use App\Post\Services\PostIndex\DTO\PostIndexDto;
 use App\Post\Services\PostIndex\DTO\PostIndexResultDto;
@@ -41,6 +43,23 @@ class PostIndexService
             $query->whereDate('created_at', '<=', $dto->dateTo);
         }
 
+        $tsQuery = $dto->search !== null && $dto->search !== ''
+            ? $this->buildPrefixTsQuery($dto->search)
+            : null;
+
+        $useFullTextSearch = $tsQuery !== null
+            && DB::connection()->getDriverName() === 'pgsql'
+            && Schema::hasColumn('posts', 'search_vector');
+
+        if ($useFullTextSearch) {
+            $query->whereRaw("search_vector @@ to_tsquery('english', ?)", [$tsQuery])
+                ->selectRaw("ts_rank(search_vector, to_tsquery('english', ?)) as search_rank", [$tsQuery]);
+        }
+
+        if ($useFullTextSearch) {
+            $query->orderByDesc('search_rank');
+        }
+
         match ($dto->sort) {
             'date_asc' => $query->orderBy('created_at', 'asc'),
             'comments' => $query->orderByDesc('comments_count')->orderByDesc('created_at'),
@@ -71,5 +90,28 @@ class PostIndexService
             currentPage: $paginator->currentPage(),
             lastPage: $paginator->lastPage(),
         );
+    }
+
+    /**
+     * Build a prefix tsquery string from search input (e.g. "veni aspernatur" -> "veni:* & aspernatur:*").
+     * Sanitizes user input to prevent tsquery operator injection.
+     */
+    private function buildPrefixTsQuery(string $search): ?string
+    {
+        $terms = preg_split('/\s+/', trim($search), -1, PREG_SPLIT_NO_EMPTY);
+        $sanitized = [];
+
+        foreach ($terms as $term) {
+            $cleaned = preg_replace('/[^\p{L}\p{N}\-\']/u', '', $term);
+            if ($cleaned !== '') {
+                $sanitized[] = $cleaned;
+            }
+        }
+
+        if ($sanitized === []) {
+            return null;
+        }
+
+        return implode(' & ', array_map(fn (string $t) => $t . ':*', $sanitized));
     }
 }

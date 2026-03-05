@@ -38,8 +38,7 @@ class PostController extends Controller
             $result->currentPage,
             ['path' => $request->url(), 'pageName' => 'page']
         );
-
-        $posts->withQueryString();
+        $posts->appends(collect($request->query())->forget('_fragment')->all());
 
         $categories = Category::orderBy('name')->get();
         $currentFilters = [
@@ -48,7 +47,12 @@ class PostController extends Controller
             'date_from' => $dto->dateFrom,
             'date_to' => $dto->dateTo,
             'sort' => $dto->sort,
+            'search' => $dto->search,
         ];
+
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
+            return view('posts.partials.manage-list', compact('posts'));
+        }
 
         return view('posts.pages.manage.index', compact('posts', 'categories', 'currentFilters'));
     }

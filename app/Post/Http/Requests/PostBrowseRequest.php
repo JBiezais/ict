@@ -26,6 +26,9 @@ class PostBrowseRequest extends FormRequest
         if ($this->has('date_to') && $this->date_to === '') {
             $replace['date_to'] = null;
         }
+        if ($this->has('search') && is_string($this->search)) {
+            $replace['search'] = trim(preg_replace('/\s+/', ' ', $this->search));
+        }
         if ($replace !== []) {
             $this->merge($replace);
         }
@@ -46,6 +49,7 @@ class PostBrowseRequest extends FormRequest
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
             'sort' => ['sometimes', 'string', 'in:date,date_asc,comments,comments_asc'],
             'include_uncategorized' => ['sometimes', 'boolean'],
+            'search' => ['sometimes', 'nullable', 'string', 'max:200'],
         ];
     }
 }

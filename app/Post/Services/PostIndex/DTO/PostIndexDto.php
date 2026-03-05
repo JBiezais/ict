@@ -21,6 +21,8 @@ class PostIndexDto extends Data
         public readonly bool $includeUncategorized = true,
         /** When true, eager load user relation (for public browse showing author names). */
         public readonly bool $loadUser = false,
+        /** Search keywords for full-text search on title and content (PostgreSQL only). */
+        public readonly ?string $search = null,
     ) {}
 
     public static function fromRequest(PostIndexRequest $request): self
@@ -39,6 +41,7 @@ class PostIndexDto extends Data
             dateTo: self::parseDate($request->validated('date_to')),
             sort: self::parseSort($request->validated('sort', 'date')),
             includeUncategorized: self::parseIncludeUncategorized($request->validated('include_uncategorized', true)),
+            search: self::parseSearch($request->validated('search')),
         );
     }
 
@@ -54,6 +57,7 @@ class PostIndexDto extends Data
             sort: self::parseSort($request->validated('sort', 'date')),
             includeUncategorized: self::parseIncludeUncategorized($request->validated('include_uncategorized', true)),
             loadUser: true,
+            search: self::parseSearch($request->validated('search')),
         );
     }
 
@@ -86,5 +90,15 @@ class PostIndexDto extends Data
     private static function parseIncludeUncategorized(mixed $value): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) !== false;
+    }
+
+    private static function parseSearch(mixed $value): ?string
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+        $trimmed = trim(preg_replace('/\s+/', ' ', $value));
+
+        return $trimmed === '' || strlen($trimmed) < 2 ? null : $trimmed;
     }
 }
