@@ -13,6 +13,8 @@
                             <time datetime="{{ $post->created_at->toIso8601String() }}">
                                 {{ $post->created_at->format('M j, Y') }}
                             </time>
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $post->comments_count }} {{ Str::plural('comment', $post->comments_count) }}</span>
                         </div>
                         <h2
                             class="text-xl font-semibold leading-tight text-neutral-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200">

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\User\Database\Models;
 
+use App\Comment\Database\Models\Comment;
 use App\Post\Database\Models\Post;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,5 +50,20 @@ class UserTest extends TestCase
         Post::factory()->count(2)->create(['user_id' => $user->id]);
 
         $this->assertCount(2, $user->posts);
+    }
+
+    public function test_comments_relationship_returns_has_many(): void
+    {
+        $user = new User;
+
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $user->comments());
+    }
+
+    public function test_user_has_many_comments(): void
+    {
+        $user = User::factory()->create();
+        Comment::factory()->count(2)->create(['user_id' => $user->id]);
+
+        $this->assertCount(2, $user->comments);
     }
 }

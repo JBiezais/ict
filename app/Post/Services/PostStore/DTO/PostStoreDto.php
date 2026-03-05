@@ -22,7 +22,9 @@ class PostStoreDto extends Data
 
         $title = $request->validated('title');
         $content = $request->validated('content');
-        assert(is_string($title) && is_string($content));
+        if (! is_string($title) || ! is_string($content)) {
+            throw new \InvalidArgumentException('Title and content must be strings.');
+        }
 
         return new self(
             userId: $user->id,

@@ -49,8 +49,11 @@
             </x-nav.dropdown>
         </div>
     </div>
-    <time datetime="{{ $post->createdAt->toIso8601String() }}"
-        class="mt-1 block text-sm text-neutral-500 dark:text-zinc-400">
-        {{ $post->createdAt->format('M j, Y') }}
-    </time>
+    <div class="mt-1 flex items-center gap-2 text-sm text-neutral-500 dark:text-zinc-400">
+        <time datetime="{{ $post->createdAt->toIso8601String() }}">
+            {{ $post->createdAt->format('M j, Y') }}
+        </time>
+        <span aria-hidden="true">·</span>
+        <span>{{ $post->commentsCount }} {{ Str::plural('comment', $post->commentsCount) }}</span>
+    </div>
 </article>
