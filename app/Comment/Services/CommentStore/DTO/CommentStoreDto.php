@@ -24,7 +24,6 @@ class CommentStoreDto extends Data
 
         $content = $request->validated('content');
         $parentId = $request->validated('parent_id');
-        assert(is_string($content));
         $parentId = $parentId !== null && is_numeric($parentId) ? (int) $parentId : null;
 
         return new self(

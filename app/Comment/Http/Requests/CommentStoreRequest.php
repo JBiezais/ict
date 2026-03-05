@@ -42,6 +42,7 @@ class CommentStoreRequest extends FormRequest
                         $comment = Comment::find((int) $value);
                         if ($comment === null || $comment->post_id !== $post->id) {
                             $fail(__('The selected comment is invalid.'));
+
                             return;
                         }
                         $depth = 0;
