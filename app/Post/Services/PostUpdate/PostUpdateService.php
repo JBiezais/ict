@@ -13,5 +13,7 @@ class PostUpdateService
             'title' => $dto->title,
             'content' => $dto->content,
         ]);
+
+        $post->categories()->sync($dto->categoryIds);
     }
 }

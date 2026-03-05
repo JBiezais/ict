@@ -3,6 +3,7 @@
 namespace App\Post\Services\PostIndex\DTO;
 
 use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -15,7 +16,9 @@ class PostDto extends Data
         public readonly string $title,
         public readonly string $content,
         public readonly int $userId,
-        public readonly CarbonInterface $createdAt,
+        public readonly ?CarbonInterface $createdAt,
         public readonly int $commentsCount,
+        /** @var \Illuminate\Support\Collection<int, \App\Category\Database\Models\Category> */
+        public readonly Collection $categories,
     ) {}
 }

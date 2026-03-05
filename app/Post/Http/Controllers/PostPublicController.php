@@ -20,7 +20,7 @@ class PostPublicController extends Controller
      */
     public function index(): View
     {
-        $posts = Post::with('user')
+        $posts = Post::with('user', 'categories')
             ->withCount('comments')
             ->latest()
             ->paginate(10);
@@ -45,7 +45,7 @@ class PostPublicController extends Controller
                 ]);
         };
 
-        $post->load(['user', 'comments' => function (Relation $query) use ($loadChildrenRecursively): void {
+        $post->load(['user', 'categories', 'comments' => function (Relation $query) use ($loadChildrenRecursively): void {
             $query->whereNull('parent_id')
                 ->withCount('children')
                 ->with(['user', 'children' => fn (Relation $q) => $loadChildrenRecursively($q, 1)]);

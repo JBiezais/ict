@@ -17,6 +17,7 @@
             <directory suffix=".php">app</directory>
         </include>
         <exclude>
+            <directory suffix=".php">app/Category/Database/Migrations</directory>
             <directory suffix=".php">app/Shared/Database/Migrations</directory>
             <directory suffix=".php">app/User/Database/Migrations</directory>
             <directory suffix=".php">app/Post/Database/Migrations</directory>

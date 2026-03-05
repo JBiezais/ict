@@ -1,6 +1,7 @@
 @props(['post'])
 
 <article class="px-4 py-3">
+    <x-post-category-labels :categories="$post->categories" />
     <div class="flex items-start justify-between gap-3">
         <a href="{{ route('posts.show', ['post' => $post->id, 'from' => 'my-posts']) }}"
             class="min-w-0 flex-1 font-medium text-neutral-900 dark:text-zinc-100 hover:text-emerald-600 dark:hover:text-emerald-400">

@@ -2,6 +2,7 @@
 
 namespace App\Post\Http\Controllers;
 
+use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
 use App\Post\Http\Requests\PostDestroyRequest;
 use App\Post\Http\Requests\PostEditRequest;
@@ -46,7 +47,9 @@ class PostController extends Controller
      */
     public function create(): View
     {
-        return view('posts.pages.create');
+        $categories = Category::orderBy('name')->get();
+
+        return view('posts.pages.create', compact('categories'));
     }
 
     /**
@@ -67,7 +70,10 @@ class PostController extends Controller
      */
     public function edit(PostEditRequest $request, Post $post): View
     {
-        return view('posts.pages.edit', compact('post'));
+        $post->load('categories');
+        $categories = Category::orderBy('name')->get();
+
+        return view('posts.pages.edit', compact('post', 'categories'));
     }
 
     /**

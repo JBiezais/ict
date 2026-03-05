@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Post\Http\Controllers;
 
+use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,6 +42,30 @@ class PostControllerTest extends TestCase
         $response->assertDontSee('User B Post');
     }
 
+    public function test_posts_index_displays_category_labels_for_categorized_posts(): void
+    {
+        $user = User::factory()->create();
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $post = Post::factory()->create(['user_id' => $user->id, 'title' => 'Categorized Post']);
+        $post->categories()->attach($tech->id);
+
+        $response = $this->actingAs($user)->get(route('my-posts.posts.index'));
+
+        $response->assertOk();
+        $response->assertSee('Tech');
+    }
+
+    public function test_posts_index_displays_uncategorized_for_posts_without_categories(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->create(['user_id' => $user->id, 'title' => 'No Categories Post']);
+
+        $response = $this->actingAs($user)->get(route('my-posts.posts.index'));
+
+        $response->assertOk();
+        $response->assertSee('Uncategorized');
+    }
+
     public function test_posts_create_renders(): void
     {
         $user = User::factory()->create();
@@ -49,6 +74,7 @@ class PostControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertViewIs('posts.pages.create');
+        $response->assertViewHas('categories');
     }
 
     public function test_posts_store_creates_post_and_redirects(): void
@@ -67,6 +93,30 @@ class PostControllerTest extends TestCase
             'title' => 'New Post Title',
             'content' => 'New post content here.',
         ]);
+    }
+
+    public function test_posts_store_with_categories_creates_post_and_attaches_categories(): void
+    {
+        $user = User::factory()->create();
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $laravel = Category::factory()->create(['name' => 'Laravel']);
+        $php = Category::factory()->create(['name' => 'PHP']);
+
+        $response = $this->actingAs($user)->post(route('my-posts.posts.store'), [
+            'title' => 'Post With Categories',
+            'content' => 'Content',
+            'category_ids' => [$tech->id, $laravel->id, $php->id],
+        ]);
+
+        $response->assertRedirect(route('my-posts.posts.index'));
+
+        $post = Post::where('title', 'Post With Categories')->first();
+        $this->assertNotNull($post);
+        $post->load('categories');
+        $this->assertCount(3, $post->categories);
+        $this->assertTrue($post->categories->pluck('name')->contains('Tech'));
+        $this->assertTrue($post->categories->pluck('name')->contains('Laravel'));
+        $this->assertTrue($post->categories->pluck('name')->contains('PHP'));
     }
 
     public function test_posts_store_fails_validation(): void
@@ -91,6 +141,7 @@ class PostControllerTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('posts.pages.edit');
         $response->assertSee($post->title);
+        $response->assertViewHas('categories');
     }
 
     public function test_posts_edit_denied_for_non_owner(): void
@@ -123,6 +174,31 @@ class PostControllerTest extends TestCase
         $post->refresh();
         $this->assertEquals('Updated Title', $post->title);
         $this->assertEquals('Updated content.', $post->content);
+    }
+
+    public function test_posts_update_with_categories_syncs_categories(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $laravel = Category::factory()->create(['name' => 'Laravel']);
+        $php = Category::factory()->create(['name' => 'PHP']);
+        $post->categories()->attach($tech->id);
+
+        $response = $this->actingAs($user)->put(route('my-posts.posts.update', $post), [
+            'title' => $post->title,
+            'content' => $post->content,
+            'category_ids' => [$tech->id, $laravel->id, $php->id],
+        ]);
+
+        $response->assertRedirect(route('my-posts.posts.index'));
+
+        $post->refresh();
+        $post->load('categories');
+        $this->assertCount(3, $post->categories);
+        $this->assertTrue($post->categories->pluck('name')->contains('Tech'));
+        $this->assertTrue($post->categories->pluck('name')->contains('Laravel'));
+        $this->assertTrue($post->categories->pluck('name')->contains('PHP'));
     }
 
     public function test_posts_update_denied_for_non_owner(): void

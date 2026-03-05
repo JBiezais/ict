@@ -1,6 +1,7 @@
 <x-app-layout>
     <article
         class="rounded-lg border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 p-8 shadow-sm">
+        <x-post-category-labels :categories="$post->categories" />
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-zinc-100">{{ $post->title }}</h2>
         <div class="mt-2 flex items-center gap-4 text-sm text-neutral-500 dark:text-zinc-400">
             <span>{{ $post->user->name }}</span>
