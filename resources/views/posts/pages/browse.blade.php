@@ -18,8 +18,7 @@
                             class="text-xl font-semibold leading-tight text-neutral-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200">
                             {{ $post->title }}
                         </h2>
-                        <p
-                            class="mt-2 text-neutral-600 dark:text-zinc-400 text-[15px] leading-relaxed line-clamp-3">
+                        <p class="mt-2 text-neutral-600 dark:text-zinc-400 text-[15px] leading-relaxed line-clamp-3">
                             {{ Str::limit(strip_tags($post->content), 200) }}
                         </p>
                     </a>

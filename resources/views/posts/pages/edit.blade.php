@@ -8,8 +8,8 @@
 
         <div>
             <x-form.input-label for="title" :value="__('Title')" />
-            <x-form.text-input id="title" class="block mt-1 w-full" type="text" name="title"
-                :value="old('title', $post->title)" required autofocus />
+            <x-form.text-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title', $post->title)"
+                required autofocus />
             <x-form.input-error :messages="$errors->get('title')" class="mt-2" />
         </div>
 

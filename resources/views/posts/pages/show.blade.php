@@ -12,9 +12,9 @@
     </article>
 
     <div class="mt-6">
-                <a href="{{ request('from') === 'my-posts' ? route('my-posts.posts.index') : route('home') }}"
-                    class="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">
-                &larr; {{ __('Back to posts') }}
+        <a href="{{ request('from') === 'my-posts' ? route('my-posts.posts.index') : route('home') }}"
+            class="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">
+            &larr; {{ __('Back to posts') }}
         </a>
     </div>
 </x-app-layout>
