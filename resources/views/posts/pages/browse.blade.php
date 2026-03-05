@@ -1,7 +1,7 @@
 <x-app-layout>
-    <x-posts::filter-bar :categories="$categories" :baseUrl="route('home')" :currentFilters="$currentFilters ?? []" />
+    <x-posts::filter-bar :categories="$categories" :baseUrl="$baseUrl" :filterBarData="$filterBarData" />
 
     <div data-posts-list>
-        @include('posts.partials.browse-list', ['posts' => $posts])
+        <x-posts::browse-list :posts="$posts" />
     </div>
 </x-app-layout>

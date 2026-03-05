@@ -76,7 +76,7 @@ class PostControllerTest extends TestCase
             ->get(route('my-posts.posts.index', ['_fragment' => '1']));
 
         $response->assertOk();
-        $response->assertViewIs('posts.partials.manage-list');
+        $response->assertViewIs('posts.components.manage-list');
     }
 
     public function test_posts_create_renders(): void

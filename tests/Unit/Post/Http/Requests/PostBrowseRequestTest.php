@@ -39,9 +39,9 @@ class PostBrowseRequestTest extends TestCase
         $response = $this->get('/?'.http_build_query(['search' => '  foo   bar  ']));
 
         $response->assertOk();
-        $response->assertViewHas('currentFilters');
-        $filters = $response->viewData('currentFilters');
-        $this->assertEquals('foo bar', $filters['search']);
+        $response->assertViewHas('filterBarData');
+        $filterBarData = $response->viewData('filterBarData');
+        $this->assertEquals('foo bar', $filterBarData->search);
     }
 
     public function test_prepare_for_validation_converts_empty_date_from_to_null(): void

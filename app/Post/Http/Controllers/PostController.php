@@ -40,21 +40,11 @@ class PostController extends Controller
         );
         $posts->appends(collect($request->query())->forget('_fragment')->all());
 
-        $categories = Category::orderBy('name')->get();
-        $currentFilters = [
-            'category_ids' => $dto->categoryIds,
-            'include_uncategorized' => $dto->includeUncategorized,
-            'date_from' => $dto->dateFrom,
-            'date_to' => $dto->dateTo,
-            'sort' => $dto->sort,
-            'search' => $dto->search,
-        ];
-
         if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
-            return view('posts.partials.manage-list', compact('posts'));
+            return view('posts.components.manage-list', compact('posts'));
         }
 
-        return view('posts.pages.manage.index', compact('posts', 'categories', 'currentFilters'));
+        return view('posts.pages.manage.index', compact('posts'));
     }
 
     /**

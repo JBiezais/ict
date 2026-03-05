@@ -1,3 +1,5 @@
+@props(['posts'])
+
 @if ($posts->isEmpty())
     <p class="text-neutral-600 dark:text-zinc-400 text-center py-16">{{ __('No posts yet.') }}</p>
 @else

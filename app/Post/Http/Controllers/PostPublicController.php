@@ -2,7 +2,6 @@
 
 namespace App\Post\Http\Controllers;
 
-use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
 use App\Post\Http\Requests\PostBrowseRequest;
 use App\Post\Services\PostIndex\DTO\PostIndexDto;
@@ -25,7 +24,6 @@ class PostPublicController extends Controller
      */
     public function index(PostBrowseRequest $request, PostIndexService $postIndexService): View
     {
-        $categories = Category::orderBy('name')->get();
         $dto = PostIndexDto::fromBrowseRequest($request);
         $result = $postIndexService->execute($dto);
 
@@ -38,20 +36,11 @@ class PostPublicController extends Controller
         );
         $posts->appends(collect($request->query())->forget('_fragment')->all());
 
-        $currentFilters = [
-            'category_ids' => $dto->categoryIds,
-            'include_uncategorized' => $dto->includeUncategorized,
-            'date_from' => $dto->dateFrom,
-            'date_to' => $dto->dateTo,
-            'sort' => $dto->sort,
-            'search' => $dto->search,
-        ];
-
         if ($request->header('X-Requested-With') === 'XMLHttpRequest' && $request->boolean('_fragment')) {
-            return view('posts.partials.browse-list', compact('posts'));
+            return view('posts.components.browse-list', compact('posts'));
         }
 
-        return view('posts.pages.browse', compact('posts', 'categories', 'currentFilters'));
+        return view('posts.pages.browse', compact('posts'));
     }
 
     /**

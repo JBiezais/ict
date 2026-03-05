@@ -111,7 +111,7 @@ class PostPublicControllerTest extends TestCase
             ->get('/?_fragment=1');
 
         $response->assertOk();
-        $response->assertViewIs('posts.partials.browse-list');
+        $response->assertViewIs('posts.components.browse-list');
     }
 
     public function test_browse_shows_category_labels_for_categorized_posts(): void
