@@ -24,8 +24,6 @@ class Comment extends Model
     use HasFactory;
 
     /**
-     * Create a new factory instance for the model.
-     *
      * @return Factory<Comment>
      */
     protected static function newFactory(): Factory
@@ -34,8 +32,6 @@ class Comment extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -46,8 +42,6 @@ class Comment extends Model
     ];
 
     /**
-     * Get the post that the comment belongs to.
-     *
      * @return BelongsTo<Post, $this>
      */
     public function post(): BelongsTo
@@ -56,8 +50,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the user that wrote the comment.
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -66,8 +58,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the parent comment (for replies).
-     *
      * @return BelongsTo<Comment, $this>
      */
     public function parent(): BelongsTo
@@ -76,8 +66,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the child comments (replies).
-     *
      * @return HasMany<Comment, $this>
      */
     public function children(): HasMany

@@ -192,4 +192,41 @@ class CommentControllerTest extends TestCase
 
         $response->assertRedirect('/login');
     }
+
+    public function test_replies_endpoint_returns_comment_children(): void
+    {
+        $post = Post::factory()->create();
+        $root = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => null, 'content' => 'Root']);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $root->id, 'content' => 'First reply']);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $root->id, 'content' => 'Second reply']);
+
+        $response = $this->get(route('posts.comments.replies', [$post, $root]));
+
+        $response->assertOk();
+        $response->assertSee('First reply');
+        $response->assertSee('Second reply');
+    }
+
+    public function test_replies_endpoint_is_public(): void
+    {
+        $post = Post::factory()->create();
+        $root = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => null]);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $root->id, 'content' => 'Child comment']);
+
+        $response = $this->get(route('posts.comments.replies', [$post, $root]));
+
+        $response->assertOk();
+        $response->assertSee('Child comment');
+    }
+
+    public function test_replies_endpoint_returns_404_when_comment_on_different_post(): void
+    {
+        $postA = Post::factory()->create();
+        $postB = Post::factory()->create();
+        $commentOnB = Comment::factory()->create(['post_id' => $postB->id, 'parent_id' => null]);
+
+        $response = $this->get(route('posts.comments.replies', [$postA, $commentOnB]));
+
+        $response->assertNotFound();
+    }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Unit\Post\Policies;
+namespace Tests\Unit\Post\Database\Policies;
 
 use App\Post\Database\Models\Post;
-use App\Post\Policies\PostPolicy;
+use App\Post\Database\Policies\PostPolicy;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

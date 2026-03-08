@@ -3,6 +3,9 @@
 <div x-data="liveSearch({ baseUrl: {{ Js::from($baseUrl) }}, listSelector: {{ Js::from($listSelector) }}, minLength: 2, debounceMs: 300 })">
     <form x-ref="searchForm" method="GET" action="{{ $baseUrl }}" class="flex-1 min-w-0 max-w-xl relative"
         @submit.prevent="handleSubmit($event)">
+        @if ($filterBarData->hasActiveFilters)
+            <input type="hidden" name="filter_applied" value="1">
+        @endif
         @foreach ($filterBarData->selectedCategoryIds as $id)
             <input type="hidden" name="category_ids[]" value="{{ $id }}">
         @endforeach

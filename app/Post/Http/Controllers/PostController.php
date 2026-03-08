@@ -23,9 +23,6 @@ use Illuminate\View\View;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the current user's posts.
-     */
     public function index(PostIndexRequest $request, PostIndexService $postIndexService): View
     {
         $dto = PostIndexDto::fromRequest($request);
@@ -47,9 +44,6 @@ class PostController extends Controller
         return view('posts.pages.manage.index', compact('posts'));
     }
 
-    /**
-     * Show the form for creating a new post.
-     */
     public function create(): View
     {
         $categories = Category::orderBy('name')->get();
@@ -57,9 +51,6 @@ class PostController extends Controller
         return view('posts.pages.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created post.
-     */
     public function store(PostStoreRequest $request, PostStoreService $postStoreService): RedirectResponse
     {
         $dto = PostStoreDto::fromRequest($request);
@@ -70,9 +61,6 @@ class PostController extends Controller
             ->with('status', __('Post created successfully.'));
     }
 
-    /**
-     * Show the form for editing the specified post.
-     */
     public function edit(PostEditRequest $request, Post $post): View
     {
         $post->load('categories');
@@ -81,9 +69,6 @@ class PostController extends Controller
         return view('posts.pages.edit', compact('post', 'categories'));
     }
 
-    /**
-     * Update the specified post.
-     */
     public function update(PostUpdateRequest $request, Post $post, PostUpdateService $postUpdateService): RedirectResponse
     {
         $dto = PostUpdateDto::fromRequest($request, $post);
@@ -94,9 +79,6 @@ class PostController extends Controller
             ->with('status', __('Post updated successfully.'));
     }
 
-    /**
-     * Remove the specified post.
-     */
     public function destroy(PostDestroyRequest $request, Post $post, PostDestroyService $postDestroyService): RedirectResponse
     {
         $postDestroyService->execute($post);

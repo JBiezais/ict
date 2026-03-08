@@ -2,44 +2,12 @@
 
 namespace App\Post\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class PostBrowseRequest extends FormRequest
+class PostBrowseRequest extends PostFilterRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Prepare the data for validation (convert empty strings to null for optional date fields).
-     */
-    protected function prepareForValidation(): void
-    {
-        $replace = [];
-        if ($this->has('date_from') && $this->date_from === '') {
-            $replace['date_from'] = null;
-        }
-        if ($this->has('date_to') && $this->date_to === '') {
-            $replace['date_to'] = null;
-        }
-        $search = $this->input('search');
-        if ($this->has('search') && is_string($search)) {
-            $replaced = preg_replace('/\s+/', ' ', $search);
-            $replace['search'] = trim(is_string($replaced) ? $replaced : $search);
-        }
-        if ($replace !== []) {
-            $this->merge($replace);
-        }
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -52,6 +20,7 @@ class PostBrowseRequest extends FormRequest
             'sort' => ['sometimes', 'string', 'in:date,date_asc,comments,comments_asc'],
             'include_uncategorized' => ['sometimes', 'boolean'],
             'search' => ['sometimes', 'nullable', 'string', 'max:200'],
+            'filter_applied' => ['sometimes', 'boolean'],
         ];
     }
 }

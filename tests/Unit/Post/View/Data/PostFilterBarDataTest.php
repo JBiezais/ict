@@ -175,6 +175,40 @@ class PostFilterBarDataTest extends TestCase
         $this->assertTrue($data->hasActiveFilters);
     }
 
+    public function test_from_filters_and_categories_with_only_uncategorized_keeps_categories_unchecked(): void
+    {
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $php = Category::factory()->create(['name' => 'PHP']);
+        $categories = Category::orderBy('name')->get();
+
+        $data = PostFilterBarData::fromFiltersAndCategories([
+            'category_ids' => [],
+            'include_uncategorized' => true,
+            'filter_applied' => true,
+        ], $categories);
+
+        $this->assertSame([], $data->selectedCategoryIds);
+        $this->assertTrue($data->includeUncategorized);
+        $this->assertTrue($data->hasActiveFilters);
+    }
+
+    public function test_from_filters_and_categories_resets_to_all_when_nothing_selected(): void
+    {
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $php = Category::factory()->create(['name' => 'PHP']);
+        $categories = Category::orderBy('name')->get();
+
+        $data = PostFilterBarData::fromFiltersAndCategories([
+            'category_ids' => [],
+            'include_uncategorized' => false,
+            'filter_applied' => true,
+        ], $categories);
+
+        $this->assertEqualsCanonicalizing([$tech->id, $php->id], $data->selectedCategoryIds);
+        $this->assertTrue($data->includeUncategorized);
+        $this->assertFalse($data->hasActiveFilters);
+    }
+
     public function test_from_filters_and_categories_with_date_range_sets_has_active_filters(): void
     {
         $categories = collect();

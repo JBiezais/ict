@@ -19,8 +19,6 @@ class Category extends Model
     use HasFactory;
 
     /**
-     * Create a new factory instance for the model.
-     *
      * @return Factory<Category>
      */
     protected static function newFactory(): Factory
@@ -29,8 +27,6 @@ class Category extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -38,8 +34,6 @@ class Category extends Model
     ];
 
     /**
-     * Get the posts that belong to this category.
-     *
      * @return BelongsToMany<Post, $this>
      */
     public function posts(): BelongsToMany

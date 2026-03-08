@@ -10,7 +10,7 @@ class CategoryStoreService
     public function execute(CategoryStoreDto $dto): Category
     {
         return Category::query()->create([
-            'name' => trim($dto->name),
+            'name' => $dto->name,
         ]);
     }
 }

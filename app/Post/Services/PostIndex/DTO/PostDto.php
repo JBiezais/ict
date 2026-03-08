@@ -2,6 +2,7 @@
 
 namespace App\Post\Services\PostIndex\DTO;
 
+use App\Category\Database\Models\Category;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\MapInputName;
@@ -18,7 +19,7 @@ class PostDto extends Data
         public readonly int $userId,
         public readonly ?CarbonInterface $createdAt,
         public readonly int $commentsCount,
-        /** @var \Illuminate\Support\Collection<int, \App\Category\Database\Models\Category> */
+        /** @var Collection<int, Category> */
         public readonly Collection $categories,
         public readonly ?string $userName = null,
     ) {}

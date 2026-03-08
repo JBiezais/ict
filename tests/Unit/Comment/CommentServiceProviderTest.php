@@ -14,5 +14,6 @@ class CommentServiceProviderTest extends TestCase
         $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('posts.comments.store'));
         $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('posts.comments.update'));
         $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('posts.comments.destroy'));
+        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('posts.comments.replies'));
     }
 }

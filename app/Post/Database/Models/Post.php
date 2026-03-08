@@ -3,6 +3,8 @@
 namespace App\Post\Database\Models;
 
 use App\Category\Database\Models\Category;
+use App\Post\Database\QueryBuilders\PostQueryBuilder;
+use App\Post\Database\QueryBuilders\PostTsQueryBuilder;
 use App\Comment\Database\Models\Comment;
 use App\User\Database\Models\User;
 use Database\Factories\PostFactory;
@@ -12,12 +14,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $user_id
  * @property string $title
  * @property string $content
- * @property \Illuminate\Support\Carbon|null $created_at
+ * @property Carbon|null $created_at
  * @property int $comments_count
  */
 class Post extends Model
@@ -26,8 +29,6 @@ class Post extends Model
     use HasFactory;
 
     /**
-     * Create a new factory instance for the model.
-     *
      * @return Factory<Post>
      */
     protected static function newFactory(): Factory
@@ -36,8 +37,14 @@ class Post extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * @return PostQueryBuilder
+     */
+    public function newEloquentBuilder($query): PostQueryBuilder
+    {
+        return new PostQueryBuilder($query, app(PostTsQueryBuilder::class));
+    }
+
+    /**
      * @var list<string>
      */
     protected $fillable = [
@@ -47,8 +54,6 @@ class Post extends Model
     ];
 
     /**
-     * Get the user that owns the post.
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -57,8 +62,6 @@ class Post extends Model
     }
 
     /**
-     * Get the comments for the post.
-     *
      * @return HasMany<Comment, $this>
      */
     public function comments(): HasMany
@@ -67,8 +70,6 @@ class Post extends Model
     }
 
     /**
-     * Get the categories for the post.
-     *
      * @return BelongsToMany<Category, $this>
      */
     public function categories(): BelongsToMany

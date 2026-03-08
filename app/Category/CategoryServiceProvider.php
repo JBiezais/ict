@@ -3,7 +3,7 @@
 namespace App\Category;
 
 use App\Category\Database\Models\Category;
-use App\Category\Policies\CategoryPolicy;
+use App\Category\Database\Policies\CategoryPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 

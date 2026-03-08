@@ -19,9 +19,6 @@ class PostPublicController extends Controller
      */
     public const MAX_COMMENT_NESTING_DEPTH = 5;
 
-    /**
-     * Display a listing of all posts (public homepage).
-     */
     public function index(PostBrowseRequest $request, PostIndexService $postIndexService): View
     {
         $dto = PostIndexDto::fromBrowseRequest($request);
@@ -43,28 +40,18 @@ class PostPublicController extends Controller
         return view('posts.pages.browse', compact('posts'));
     }
 
-    /**
-     * Display the specified post.
-     */
     public function show(Post $post): View
     {
         $post->loadCount('comments');
-        $maxDepth = self::MAX_COMMENT_NESTING_DEPTH;
-        $loadChildrenRecursively = function (Relation $query, int $currentDepth = 0) use (&$loadChildrenRecursively, $maxDepth): void {
-            $query->withCount('children')
-                ->with([
-                    'user',
-                    'children' => $currentDepth < $maxDepth
-                        ? fn (Relation $q) => $loadChildrenRecursively($q, $currentDepth + 1)
-                        : fn (Relation $q) => $q->with('user')->withCount('children'),
-                ]);
-        };
-
-        $post->load(['user', 'categories', 'comments' => function (Relation $query) use ($loadChildrenRecursively): void {
-            $query->whereNull('parent_id')
+        $post->load([
+            'user',
+            'categories',
+            'comments' => fn (Relation $query): mixed => $query
+                ->whereNull('parent_id')
                 ->withCount('children')
-                ->with(['user', 'children' => fn (Relation $q) => $loadChildrenRecursively($q, 1)]);
-        }]);
+                ->with('user')
+                ->latest(),
+        ]);
 
         return view('posts.pages.show', [
             'post' => $post,

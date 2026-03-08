@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit\Category\Policies;
+namespace Tests\Unit\Category\Database\Policies;
 
-use App\Category\Policies\CategoryPolicy;
+use App\Category\Database\Policies\CategoryPolicy;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

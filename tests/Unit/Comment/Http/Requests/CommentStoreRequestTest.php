@@ -4,6 +4,7 @@ namespace Tests\Unit\Comment\Http\Requests;
 
 use App\Comment\Database\Models\Comment;
 use App\Comment\Http\Requests\CommentStoreRequest;
+use App\Comment\Http\Rules\ValidCommentDepthRule;
 use App\Post\Database\Models\Post;
 use App\Post\Http\Controllers\PostPublicController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,6 +45,8 @@ class CommentStoreRequestTest extends TestCase
         $existsRule = collect($rules['parent_id'])->first(fn ($r) => is_string($r) && str_contains($r, 'exists'));
         $this->assertNotNull($existsRule);
         $this->assertStringContainsString('exists:comments,id', $existsRule);
+        $validCommentParentRule = collect($rules['parent_id'])->first(fn ($r) => $r instanceof ValidCommentDepthRule);
+        $this->assertInstanceOf(ValidCommentDepthRule::class, $validCommentParentRule);
     }
 
     public function test_parent_id_rule_skips_check_when_route_post_is_not_post_model(): void

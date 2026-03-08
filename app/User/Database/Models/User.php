@@ -25,8 +25,6 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, MustVerifyEmailTrait, Notifiable;
 
     /**
-     * Create a new factory instance for the model.
-     *
      * @return Factory<User>
      */
     protected static function newFactory(): Factory
@@ -35,8 +33,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -46,8 +42,6 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
@@ -56,8 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -69,8 +61,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get the posts for the user.
-     *
      * @return HasMany<Post, $this>
      */
     public function posts(): HasMany
@@ -79,8 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get the comments for the user.
-     *
      * @return HasMany<Comment, $this>
      */
     public function comments(): HasMany

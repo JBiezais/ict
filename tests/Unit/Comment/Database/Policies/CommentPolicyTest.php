@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Unit\Comment\Policies;
+namespace Tests\Unit\Comment\Database\Policies;
 
 use App\Comment\Database\Models\Comment;
-use App\Comment\Policies\CommentPolicy;
+use App\Comment\Database\Policies\CommentPolicy;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

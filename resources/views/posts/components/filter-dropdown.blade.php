@@ -19,6 +19,7 @@
     </x-slot>
     <x-slot name="content">
         <form method="GET" action="{{ $baseUrl }}" id="filter-form">
+            <input type="hidden" name="filter_applied" value="1">
             <input type="hidden" name="sort" value="{{ $filterBarData->sort }}">
             <input type="hidden" name="search" value="{{ $filterBarData->search }}">
             @if ($categories->isNotEmpty())

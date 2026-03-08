@@ -19,6 +19,9 @@
     </x-slot>
     <x-slot name="content">
         <form method="GET" action="{{ $baseUrl }}" id="sort-form">
+            @if ($filterBarData->hasActiveFilters)
+                <input type="hidden" name="filter_applied" value="1">
+            @endif
             @foreach ($filterBarData->selectedCategoryIds as $id)
                 <input type="hidden" name="category_ids[]" value="{{ $id }}">
             @endforeach

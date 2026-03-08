@@ -3,6 +3,8 @@
 namespace App\Post\Services\PostStore\DTO;
 
 use App\Post\Http\Requests\PostStoreRequest;
+use InvalidArgumentException;
+use RuntimeException;
 use Spatie\LaravelData\Data;
 
 class PostStoreDto extends Data
@@ -19,13 +21,13 @@ class PostStoreDto extends Data
     {
         $user = $request->user();
         if ($user === null) {
-            throw new \RuntimeException('Authenticated user is required.');
+            throw new RuntimeException('Authenticated user is required.');
         }
 
         $title = $request->validated('title');
         $content = $request->validated('content');
         if (! is_string($title) || ! is_string($content)) {
-            throw new \InvalidArgumentException('Title and content must be strings.');
+            throw new InvalidArgumentException('Title and content must be strings.');
         }
 
         $categoryIds = $request->validated('category_ids') ?? [];

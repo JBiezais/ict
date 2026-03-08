@@ -9,7 +9,6 @@ use Spatie\LaravelData\Data;
 class PostIndexDto extends Data
 {
     public function __construct(
-        /** When null, posts are not filtered by user (e.g. public browse). */
         public readonly ?int $userId = null,
         public readonly int $page = 1,
         public readonly int $perPage = 10,
@@ -19,10 +18,9 @@ class PostIndexDto extends Data
         public readonly ?string $dateTo = null,
         public readonly string $sort = 'date',
         public readonly bool $includeUncategorized = true,
-        /** When true, eager load user relation (for public browse showing author names). */
         public readonly bool $loadUser = false,
-        /** Search keywords for full-text search on title and content (PostgreSQL only). */
         public readonly ?string $search = null,
+        public readonly bool $onlyUncategorizedExplicit = false,
     ) {}
 
     public static function fromRequest(PostIndexRequest $request): self
@@ -32,36 +30,42 @@ class PostIndexDto extends Data
             throw new \RuntimeException('Authenticated user is required.');
         }
 
-        $categoryIds = $request->validated('category_ids', []);
+        $categoryIds = self::parseCategoryIds(is_array($request->validated('category_ids', [])) ? $request->validated('category_ids', []) : []);
+        $includeUncategorized = self::parseIncludeUncategorized($request->validated('include_uncategorized', true));
+        $filterApplied = filter_var($request->validated('filter_applied', false), FILTER_VALIDATE_BOOLEAN);
 
         return new self(
             userId: $user->id,
             page: self::parsePage($request->validated('page', 1)),
             perPage: self::parsePerPage($request->validated('per_page', 10)),
-            categoryIds: self::parseCategoryIds(is_array($categoryIds) ? $categoryIds : []),
+            categoryIds: $categoryIds,
             dateFrom: self::parseDate($request->validated('date_from')),
             dateTo: self::parseDate($request->validated('date_to')),
             sort: self::parseSort($request->validated('sort', 'date')),
-            includeUncategorized: self::parseIncludeUncategorized($request->validated('include_uncategorized', true)),
+            includeUncategorized: $includeUncategorized,
             search: self::parseSearch($request->validated('search')),
+            onlyUncategorizedExplicit: $filterApplied && $categoryIds === [] && $includeUncategorized,
         );
     }
 
     public static function fromBrowseRequest(PostBrowseRequest $request): self
     {
-        $categoryIds = $request->validated('category_ids', []);
+        $categoryIds = self::parseCategoryIds(is_array($request->validated('category_ids', [])) ? $request->validated('category_ids', []) : []);
+        $includeUncategorized = self::parseIncludeUncategorized($request->validated('include_uncategorized', true));
+        $filterApplied = filter_var($request->validated('filter_applied', false), FILTER_VALIDATE_BOOLEAN);
 
         return new self(
             userId: null,
             page: self::parsePage($request->validated('page', 1)),
             perPage: 10,
-            categoryIds: self::parseCategoryIds(is_array($categoryIds) ? $categoryIds : []),
+            categoryIds: $categoryIds,
             dateFrom: self::parseDate($request->validated('date_from')),
             dateTo: self::parseDate($request->validated('date_to')),
             sort: self::parseSort($request->validated('sort', 'date')),
-            includeUncategorized: self::parseIncludeUncategorized($request->validated('include_uncategorized', true)),
+            includeUncategorized: $includeUncategorized,
             loadUser: true,
             search: self::parseSearch($request->validated('search')),
+            onlyUncategorizedExplicit: $filterApplied && $categoryIds === [] && $includeUncategorized,
         );
     }
 
@@ -82,8 +86,8 @@ class PostIndexDto extends Data
     private static function parseCategoryIds(array $values): array
     {
         $result = [];
-        foreach ($values as $v) {
-            $id = is_numeric($v) ? (int) $v : 0;
+        foreach ($values as $value) {
+            $id = is_numeric($value) ? (int) $value : 0;
             if ($id !== 0) {
                 $result[] = $id;
             }
