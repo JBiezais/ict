@@ -6,6 +6,7 @@ use App\Comment\Database\Models\Comment;
 use App\Post\Database\Models\Post;
 use App\User\Database\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Comment\Database\Models\Comment>
@@ -22,6 +23,7 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => (string) Str::uuid(),
             'post_id' => Post::factory(),
             'user_id' => User::factory(),
             'parent_id' => null,
