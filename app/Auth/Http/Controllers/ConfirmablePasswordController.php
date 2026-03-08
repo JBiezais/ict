@@ -20,7 +20,9 @@ class ConfirmablePasswordController extends Controller
         $user = $request->user();
         abort_if($user === null, 403);
 
-        $confirmPasswordService->execute($user, $request->validated('password'), $request);
+        $password = $request->validated('password');
+        abort_if(! is_string($password), 403);
+        $confirmPasswordService->execute($user, $password, $request);
 
         return redirect()->intended(route('my-posts.posts.index', absolute: false));
     }

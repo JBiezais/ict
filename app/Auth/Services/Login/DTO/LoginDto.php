@@ -3,9 +3,9 @@
 namespace App\Auth\Services\Login\DTO;
 
 use App\Auth\Http\Requests\LoginRequest;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Spatie\LaravelData\Data;
-use Illuminate\Support\Str;
 
 class LoginDto extends Data
 {

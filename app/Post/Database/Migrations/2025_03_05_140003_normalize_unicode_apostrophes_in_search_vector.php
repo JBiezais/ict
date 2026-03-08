@@ -27,8 +27,8 @@ return new class extends Migration
             ALTER TABLE posts
             ADD COLUMN search_vector tsvector
             GENERATED ALWAYS AS (
-                setweight(to_tsvector('simple', " . sprintf($norm, 'title') . "), 'A') ||
-                setweight(to_tsvector('simple', " . sprintf($norm, 'content') . "), 'B')
+                setweight(to_tsvector('simple', ".sprintf($norm, 'title')."), 'A') ||
+                setweight(to_tsvector('simple', ".sprintf($norm, 'content')."), 'B')
             ) STORED
         ");
         DB::statement('CREATE INDEX posts_search_vector_idx ON posts USING GIN (search_vector)');

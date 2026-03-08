@@ -127,7 +127,11 @@ class SeedPostsCommand extends Command
 
         $this->ensureMinimumUsers(5);
 
-        $userIds = User::inRandomOrder()->limit(5)->pluck('id');
+        /** @var \Illuminate\Support\Collection<int, int> $userIds */
+        $userIds = User::inRandomOrder()->limit(5)->pluck('id')->map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $id): int => is_int($id) ? $id : (int) strval($id)
+        );
         $numAuthors = fake()->numberBetween(3, min(5, $userIds->count()));
 
         return $userIds->take($numAuthors)->values();
@@ -140,14 +144,19 @@ class SeedPostsCommand extends Command
     {
         $this->ensureMinimumUsers(5);
 
-        return User::inRandomOrder()->limit(5)->pluck('id')->values();
+        return User::inRandomOrder()->limit(5)->pluck('id')->map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $id): int => is_int($id) ? $id : (int) strval($id)
+        )->values();
     }
 
     private function ensureMinimumUsers(int $min): void
     {
         $current = User::count();
         if ($current < $min) {
-            User::factory($min - $current)->create();
+            /** @var \Illuminate\Database\Eloquent\Factories\Factory<\App\User\Database\Models\User> $factory */
+            $factory = User::factory($min - $current);
+            $factory->create();
         }
     }
 
@@ -156,10 +165,11 @@ class SeedPostsCommand extends Command
      */
     private function ensureCategories(): Collection
     {
+        /** @var \Illuminate\Support\Collection<int, int> $ids */
         $ids = collect();
         foreach (self::CATEGORY_NAMES as $name) {
             $category = Category::firstOrCreate(['name' => $name]);
-            $ids->push($category->id);
+            $ids->push((int) $category->id);
         }
 
         return $ids;
@@ -176,7 +186,9 @@ class SeedPostsCommand extends Command
 
     private function generateTitle(): string
     {
-        return fake()->randomElement(self::TITLE_TEMPLATES);
+        $title = fake()->randomElement(self::TITLE_TEMPLATES);
+
+        return is_string($title) ? $title : '';
     }
 
     private function generateContent(): string
@@ -223,7 +235,9 @@ class SeedPostsCommand extends Command
                 $parentId = null;
                 $depth = 0;
             } else {
-                $parentId = fake()->randomElement(array_keys($repliable));
+                $parentIdKey = fake()->randomElement(array_keys($repliable));
+                /** @phpstan-ignore argument.type */
+                $parentId = is_int($parentIdKey) ? $parentIdKey : (int) strval($parentIdKey);
                 $depth = $commentDepths[$parentId] + 1;
             }
 

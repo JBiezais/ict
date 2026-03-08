@@ -27,7 +27,7 @@ class PostIndexService
             ->filterByDateRange($dto->dateFrom, $dto->dateTo)
             ->searchByFullText($dto->search)
             ->orderBySort($dto->sort)
-            ->paginate($dto->perPage, $columns, 'page', $dto->page);
+            ->paginate($dto->perPage, $columns ?? ['*'], 'page', $dto->page);
 
         return $this->resultMapper->map($paginator);
     }

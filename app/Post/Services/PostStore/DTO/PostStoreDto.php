@@ -32,10 +32,17 @@ class PostStoreDto extends Data
         }
 
         $categoryUuids = $request->validated('category_uuids') ?? [];
-        $categoryUuids = is_array($categoryUuids) ? array_filter(array_map('strval', $categoryUuids)) : [];
-        $categoryIds = empty($categoryUuids)
-            ? []
-            : Category::whereIn('uuid', $categoryUuids)->pluck('id')->all();
+        $categoryUuids = is_array($categoryUuids) ? array_filter(array_map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $v): string => strval($v),
+            $categoryUuids
+        )) : [];
+        $rawIds = empty($categoryUuids) ? [] : Category::whereIn('uuid', $categoryUuids)->pluck('id')->all();
+        $categoryIds = array_map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $id): int => is_int($id) ? $id : (int) strval($id),
+            $rawIds
+        );
 
         return new self(
             userId: $user->id,

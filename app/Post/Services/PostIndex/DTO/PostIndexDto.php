@@ -84,14 +84,28 @@ class PostIndexDto extends Data
      * @param  array<mixed>  $values
      * @return list<int>
      */
+    /**
+     * @param  array<mixed>  $values
+     * @return list<int>
+     */
     private static function resolveCategoryUuidsToIds(array $values): array
     {
-        $uuids = array_values(array_filter(array_map('strval', $values)));
+        $uuids = array_values(array_filter(array_map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $v): string => strval($v),
+            $values
+        )));
         if (empty($uuids)) {
             return [];
         }
 
-        return Category::whereIn('uuid', $uuids)->pluck('id')->all();
+        $ids = Category::whereIn('uuid', $uuids)->pluck('id')->all();
+
+        return array_values(array_map(
+            /** @phpstan-ignore argument.type */
+            fn (mixed $id): int => is_int($id) ? $id : (int) strval($id),
+            $ids
+        ));
     }
 
     private static function parseDate(mixed $value): ?string

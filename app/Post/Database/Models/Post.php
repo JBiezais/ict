@@ -3,9 +3,9 @@
 namespace App\Post\Database\Models;
 
 use App\Category\Database\Models\Category;
+use App\Comment\Database\Models\Comment;
 use App\Post\Database\QueryBuilders\PostQueryBuilder;
 use App\Post\Database\QueryBuilders\PostTsQueryBuilder;
-use App\Comment\Database\Models\Comment;
 use App\User\Database\Models\User;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -59,9 +59,6 @@ class Post extends Model
         return 'uuid';
     }
 
-    /**
-     * @return PostQueryBuilder
-     */
     public function newEloquentBuilder($query): PostQueryBuilder
     {
         return new PostQueryBuilder($query, app(PostTsQueryBuilder::class));

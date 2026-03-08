@@ -3,7 +3,6 @@
 namespace App\Post\Database\QueryBuilders;
 
 use App\Category\Database\Models\Category;
-use App\Post\Services\PostIndex\DTO\PostIndexDto;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

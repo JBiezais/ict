@@ -31,9 +31,15 @@ class CommentStoreDto extends Data
         }
 
         $parentUuid = $request->validated('parent_uuid');
-        $parentId = is_string($parentUuid) && $parentUuid !== ''
-            ? Comment::where('uuid', $parentUuid)->value('id')
-            : null;
+        $parentId = null;
+        if (is_string($parentUuid) && $parentUuid !== '') {
+            $res = Comment::where('uuid', $parentUuid)->value('id');
+            if (is_int($res)) {
+                $parentId = $res;
+            } elseif (is_string($res) && ctype_digit($res)) {
+                $parentId = (int) $res;
+            }
+        }
 
         return new self(
             postId: $post->id,

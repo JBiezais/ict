@@ -2,6 +2,7 @@
 
 namespace App\Post\Services\PostIndex;
 
+use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
 use App\Post\Services\PostIndex\DTO\PostDto;
 use App\Post\Services\PostIndex\DTO\PostIndexResultDto;
@@ -19,15 +20,20 @@ class PostIndexResultMapper
         $collection = $paginator->getCollection();
 
         $items = $collection
-            ->map(fn (Post $post) => new PostDto(
-                uuid: $post->uuid,
-                title: $post->title,
-                content: $post->content,
-                createdAt: $post->created_at,
-                commentsCount: $post->comments_count,
-                categories: $post->categories->map(fn ($c) => (object) ['uuid' => $c->uuid, 'name' => $c->name]),
-                userName: $post->relationLoaded('user') ? $post->user?->name : null,
-            ))
+            ->map(function (Post $post) {
+                $categories = $post->categories->map(fn (Category $c): object => (object) ['uuid' => $c->uuid, 'name' => $c->name]);
+                /** @var \Illuminate\Support\Collection<int, object{uuid: string, name: string}> $categories */
+
+                return new PostDto(
+                    uuid: $post->uuid,
+                    title: $post->title,
+                    content: $post->content,
+                    createdAt: $post->created_at,
+                    commentsCount: $post->comments_count,
+                    categories: $categories,
+                    userName: $post->relationLoaded('user') ? $post->user?->name : null,
+                );
+            })
             ->values()
             ->all();
 

@@ -14,6 +14,7 @@ use App\Comment\Services\CommentUpdate\DTO\CommentUpdateDto;
 use App\Post\Database\Models\Post;
 use App\Post\Http\Controllers\PostPublicController;
 use App\Shared\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,7 +27,7 @@ class CommentController extends Controller
         $maxDepth = PostPublicController::MAX_COMMENT_NESTING_DEPTH;
 
         $comment->load([
-            'children' => fn ($q) => $q->with('user')->withCount('children')->latest(),
+            'children' => fn (Relation $q) => $q->with('user')->withCount('children')->latest(),
         ]);
 
         return view('comments.partials.replies', [

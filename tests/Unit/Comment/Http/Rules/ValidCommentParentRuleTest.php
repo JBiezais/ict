@@ -150,5 +150,4 @@ class ValidCommentParentRuleTest extends TestCase
 
         $this->assertFalse($validator->fails());
     }
-
 }

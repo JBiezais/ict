@@ -6,28 +6,27 @@
     $canReply = $depth < $maxDepth;
 @endphp
 
-<article id="comment-{{ $comment->uuid }}"
-    x-data="{
-        editing: false,
-        replyOpen: false,
-        repliesOpen: false,
-        repliesLoaded: false,
-        repliesHtml: '',
-        loadingReplies: false,
-        async toggleReplies() {
-            if (this.repliesLoaded) {
-                this.repliesOpen = !this.repliesOpen;
-            } else {
-                this.repliesOpen = true;
-                this.loadingReplies = true;
-                const url = $el.dataset.repliesUrl;
-                const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-                this.repliesHtml = await response.text();
-                this.repliesLoaded = true;
-                this.loadingReplies = false;
-            }
+<article id="comment-{{ $comment->uuid }}" x-data="{
+    editing: false,
+    replyOpen: false,
+    repliesOpen: false,
+    repliesLoaded: false,
+    repliesHtml: '',
+    loadingReplies: false,
+    async toggleReplies() {
+        if (this.repliesLoaded) {
+            this.repliesOpen = !this.repliesOpen;
+        } else {
+            this.repliesOpen = true;
+            this.loadingReplies = true;
+            const url = $el.dataset.repliesUrl;
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            this.repliesHtml = await response.text();
+            this.repliesLoaded = true;
+            this.loadingReplies = false;
         }
-    }"
+    }
+}"
     data-replies-url="{{ route('posts.comments.replies', [$post, $comment]) }}?depth={{ $depth + 1 }}"
     {{ $attributes->merge([
         'class' => $isReply ? 'mt-2' : 'py-3 border-b border-neutral-200 dark:border-zinc-700 last:border-b-0',

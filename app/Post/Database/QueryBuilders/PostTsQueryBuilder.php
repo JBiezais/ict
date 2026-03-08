@@ -14,7 +14,7 @@ class PostTsQueryBuilder
         $sanitized = [];
 
         foreach ($terms as $term) {
-            $withoutApostrophe = preg_replace("/['\x{2019}\x{02BC}]/u", '', $term);
+            $withoutApostrophe = preg_replace("/['\x{2019}\x{02BC}]/u", '', $term) ?? '';
             $cleaned = preg_replace('/[^\p{L}\p{N}\-]/u', '', $withoutApostrophe);
             if (is_string($cleaned) && $cleaned !== '') {
                 $sanitized[] = $cleaned;
