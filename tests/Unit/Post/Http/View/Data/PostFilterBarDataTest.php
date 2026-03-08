@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Post\View\Data;
+namespace Tests\Unit\Post\Http\View\Data;
 
 use App\Category\Database\Models\Category;
 use App\Post\Http\View\Data\PostFilterBarData;

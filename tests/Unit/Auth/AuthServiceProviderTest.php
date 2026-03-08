@@ -3,6 +3,7 @@
 namespace Tests\Unit\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class AuthServiceProviderTest extends TestCase
@@ -11,9 +12,8 @@ class AuthServiceProviderTest extends TestCase
 
     public function test_auth_routes_are_registered(): void
     {
-        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('login'));
-        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('register'));
-        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('password.request'));
-        $this->assertNotNull(\Illuminate\Support\Facades\Route::getRoutes()->getByName('logout'));
+        $this->assertNotNull(Route::getRoutes()->getByName('login'));
+        $this->assertNotNull(Route::getRoutes()->getByName('register'));
+        $this->assertNotNull(Route::getRoutes()->getByName('logout'));
     }
 }

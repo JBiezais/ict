@@ -18,7 +18,7 @@ class UserTest extends TestCase
     {
         $user = new User;
 
-        $this->assertEquals(['name', 'email', 'password'], $user->getFillable());
+        $this->assertEquals(['name', 'email', 'email_verified_at', 'password'], $user->getFillable());
     }
 
     public function test_hidden_attributes(): void

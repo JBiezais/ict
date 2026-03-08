@@ -2,25 +2,24 @@
 
 namespace Tests\Unit\Auth\Http\Requests;
 
-use App\Auth\Http\Requests\LoginRequest;
+use App\Auth\Http\Requests\ConfirmPasswordRequest;
 use Tests\TestCase;
 
-class LoginRequestTest extends TestCase
+class ConfirmPasswordRequestTest extends TestCase
 {
     public function test_authorize_returns_true(): void
     {
-        $request = new LoginRequest;
+        $request = new ConfirmPasswordRequest;
 
         $this->assertTrue($request->authorize());
     }
 
     public function test_rules_return_correct_validation_rules(): void
     {
-        $request = new LoginRequest;
+        $request = new ConfirmPasswordRequest;
 
         $rules = $request->rules();
 
-        $this->assertEquals(['required', 'string', 'email'], $rules['email']);
         $this->assertEquals(['required', 'string'], $rules['password']);
     }
 }

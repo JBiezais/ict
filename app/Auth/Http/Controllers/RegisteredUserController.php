@@ -2,49 +2,24 @@
 
 namespace App\Auth\Http\Controllers;
 
+use App\Auth\Http\Requests\RegisterRequest;
+use App\Auth\Services\Register\DTO\RegisterDto;
+use App\Auth\Services\Register\RegisterService;
 use App\Shared\Http\Controllers\Controller;
-use App\User\Database\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.pages.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws ValidationException
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request, RegisterService $registerService): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')->value()),
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
+        $dto = RegisterDto::fromRequest($request);
+        $registerService->execute($dto);
 
         return redirect(route('my-posts.posts.index', absolute: false));
     }
