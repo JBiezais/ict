@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->uuid('uuid')->nullable()->after('id');
+            $table->uuid()->nullable()->after('id');
         });
 
         foreach (DB::table('comments')->get() as $comment) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Post\View\Data;
+namespace App\Post\Http\View\Data;
 
 use App\Category\Database\Models\Category;
 use Carbon\Carbon;

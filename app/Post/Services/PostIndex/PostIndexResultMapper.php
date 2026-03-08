@@ -6,6 +6,7 @@ use App\Post\Database\Models\Post;
 use App\Post\Services\PostIndex\DTO\PostDto;
 use App\Post\Services\PostIndex\DTO\PostIndexResultDto;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class PostIndexResultMapper
 {
@@ -14,7 +15,7 @@ class PostIndexResultMapper
      */
     public function map(LengthAwarePaginator $paginator): PostIndexResultDto
     {
-        /** @var \Illuminate\Support\Collection<int, Post> $collection */
+        /** @var Collection<int, Post> $collection */
         $collection = $paginator->getCollection();
 
         $items = $collection

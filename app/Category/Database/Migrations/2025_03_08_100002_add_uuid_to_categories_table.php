@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->uuid('uuid')->nullable()->after('id');
+            $table->uuid()->nullable()->after('id');
         });
 
         foreach (DB::table('categories')->get() as $category) {

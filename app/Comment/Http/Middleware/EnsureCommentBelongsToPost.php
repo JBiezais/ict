@@ -15,9 +15,11 @@ class EnsureCommentBelongsToPost
         $post = $request->route('post');
         $comment = $request->route('comment');
 
-        if ($post instanceof Post
+        if (
+            $post instanceof Post
             && $comment instanceof Comment
-            && $comment->post_id !== $post->id) {
+            && $comment->post_id !== $post->id
+        ) {
             abort(404);
         }
 

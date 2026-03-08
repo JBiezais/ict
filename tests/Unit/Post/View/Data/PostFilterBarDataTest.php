@@ -3,7 +3,7 @@
 namespace Tests\Unit\Post\View\Data;
 
 use App\Category\Database\Models\Category;
-use App\Post\View\Data\PostFilterBarData;
+use App\Post\Http\View\Data\PostFilterBarData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Tests\TestCase;

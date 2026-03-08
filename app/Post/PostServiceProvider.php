@@ -6,7 +6,7 @@ use App\Category\Database\Models\Category;
 use App\Post\Console\SeedPostsCommand;
 use App\Post\Database\Models\Post;
 use App\Post\Database\Policies\PostPolicy;
-use App\Post\View\Data\PostFilterBarData;
+use App\Post\Http\View\Data\PostFilterBarData;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
