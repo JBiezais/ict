@@ -19,6 +19,7 @@
     </x-slot>
     <x-slot name="content">
         <form method="GET" action="{{ $baseUrl }}" id="filter-form">
+            <input type="hidden" name="filter_applied" value="1">
             <input type="hidden" name="sort" value="{{ $filterBarData->sort }}">
             <input type="hidden" name="search" value="{{ $filterBarData->search }}">
             @if ($categories->isNotEmpty())
@@ -28,8 +29,8 @@
                     @foreach ($categories as $category)
                         <label
                             class="flex items-center gap-2 cursor-pointer text-sm text-neutral-700 dark:text-zinc-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/50 -mx-2 px-2 py-1.5 rounded">
-                            <input type="checkbox" name="category_ids[]" value="{{ $category->id }}"
-                                {{ in_array($category->id, $filterBarData->selectedCategoryIds) ? 'checked' : '' }}
+                            <input type="checkbox" name="category_uuids[]" value="{{ $category->uuid }}"
+                                {{ in_array($category->uuid, $filterBarData->selectedCategoryUuids) ? 'checked' : '' }}
                                 onchange="this.form.submit()"
                                 class="rounded border-neutral-300 dark:border-zinc-600 text-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-400 dark:bg-zinc-800">
                             <span>{{ $category->name }}</span>

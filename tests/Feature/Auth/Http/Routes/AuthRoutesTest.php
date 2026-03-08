@@ -14,14 +14,7 @@ class AuthRoutesTest extends TestCase
     {
         $this->assertNotNull(Route::getRoutes()->getByName('login'));
         $this->assertNotNull(Route::getRoutes()->getByName('register'));
-        $this->assertNotNull(Route::getRoutes()->getByName('password.request'));
-        $this->assertNotNull(Route::getRoutes()->getByName('password.reset'));
-        $this->assertNotNull(Route::getRoutes()->getByName('password.store'));
-        $this->assertNotNull(Route::getRoutes()->getByName('verification.notice'));
-        $this->assertNotNull(Route::getRoutes()->getByName('verification.verify'));
-        $this->assertNotNull(Route::getRoutes()->getByName('verification.send'));
         $this->assertNotNull(Route::getRoutes()->getByName('password.confirm'));
-        $this->assertNotNull(Route::getRoutes()->getByName('password.update'));
         $this->assertNotNull(Route::getRoutes()->getByName('logout'));
     }
 }

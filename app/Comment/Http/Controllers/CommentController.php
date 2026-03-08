@@ -12,14 +12,32 @@ use App\Comment\Services\CommentStore\DTO\CommentStoreDto;
 use App\Comment\Services\CommentUpdate\CommentUpdateService;
 use App\Comment\Services\CommentUpdate\DTO\CommentUpdateDto;
 use App\Post\Database\Models\Post;
+use App\Post\Http\Controllers\PostPublicController;
 use App\Shared\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CommentController extends Controller
 {
-    /**
-     * Store a newly created comment.
-     */
+    public function replies(Post $post, Comment $comment, Request $request): View
+    {
+        $depth = max(1, min((int) $request->query('depth', 1), PostPublicController::MAX_COMMENT_NESTING_DEPTH));
+        $maxDepth = PostPublicController::MAX_COMMENT_NESTING_DEPTH;
+
+        $comment->load([
+            'children' => fn (Relation $q) => $q->with('user')->withCount('children')->latest(),
+        ]);
+
+        return view('comments.partials.replies', [
+            'comments' => $comment->children,
+            'post' => $post,
+            'depth' => $depth,
+            'maxDepth' => $maxDepth,
+        ]);
+    }
+
     public function store(
         Post $post,
         CommentStoreRequest $request,
@@ -31,51 +49,34 @@ class CommentController extends Controller
         return redirect()
             ->back()
             ->with('status', __('Comment added.'))
-            ->withFragment('comment-'.$comment->id);
+            ->withFragment('comment-'.$comment->uuid);
     }
 
-    /**
-     * Update the specified comment.
-     */
     public function update(
         Post $post,
         Comment $comment,
         CommentUpdateRequest $request,
         CommentUpdateService $commentUpdateService
     ): RedirectResponse {
-        $this->authorizeCommentBelongsToPost($post, $comment);
-
         $dto = CommentUpdateDto::fromRequest($request);
         $commentUpdateService->execute($dto, $comment);
 
         return redirect()
             ->back()
             ->with('status', __('Comment updated.'))
-            ->withFragment('comment-'.$comment->id);
+            ->withFragment('comment-'.$comment->uuid);
     }
 
-    /**
-     * Remove the specified comment.
-     */
     public function destroy(
         Post $post,
         Comment $comment,
         CommentDestroyRequest $request,
         CommentDestroyService $commentDestroyService
     ): RedirectResponse {
-        $this->authorizeCommentBelongsToPost($post, $comment);
-
         $commentDestroyService->execute($comment);
 
         return redirect()
             ->back()
             ->with('status', __('Comment deleted.'));
-    }
-
-    private function authorizeCommentBelongsToPost(Post $post, Comment $comment): void
-    {
-        if ($comment->post_id !== $post->id) {
-            abort(404);
-        }
     }
 }

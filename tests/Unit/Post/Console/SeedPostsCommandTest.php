@@ -16,7 +16,7 @@ class SeedPostsCommandTest extends TestCase
         $this->artisan('post:seed')
             ->assertSuccessful();
 
-        $this->assertEquals(50, Post::count());
+        $this->assertEquals(25, Post::count());
     }
 
     public function test_creates_posts_with_custom_count(): void
@@ -35,5 +35,20 @@ class SeedPostsCommandTest extends TestCase
             ->assertSuccessful();
 
         $this->assertEquals(3, Post::where('user_id', $user->id)->count());
+    }
+
+    public function test_fails_with_negative_count(): void
+    {
+        $this->artisan('post:seed', ['--count' => -1])
+            ->assertFailed()
+            ->expectsOutput('Count must be non-negative.');
+    }
+
+    public function test_throws_when_user_not_found(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('User with ID 99999 not found.');
+
+        $this->artisan('post:seed', ['--user' => '99999', '--count' => 1]);
     }
 }

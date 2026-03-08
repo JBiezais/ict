@@ -10,14 +10,11 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    /**
-     * Store a newly created category (AJAX endpoint). Returns JSON.
-     */
     public function store(CategoryStoreRequest $request, CategoryStoreService $categoryStoreService): JsonResponse
     {
         $dto = CategoryStoreDto::fromRequest($request);
         $category = $categoryStoreService->execute($dto);
 
-        return response()->json(['id' => $category->id, 'name' => $category->name], 201);
+        return response()->json(['uuid' => $category->uuid, 'name' => $category->name], 201);
     }
 }

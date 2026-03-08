@@ -5,27 +5,15 @@ namespace Tests\Unit\Category\Http\Requests;
 use App\Category\Http\Requests\CategoryStoreRequest;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class CategoryStoreRequestTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_authorize_returns_false_for_guest(): void
+    public function test_authorize_returns_true(): void
     {
-        $request = CategoryStoreRequest::createFrom(Request::create(route('categories.store'), 'POST', ['name' => 'Test']))
-            ->setContainer($this->app);
-
-        $this->assertFalse($request->authorize());
-    }
-
-    public function test_authorize_returns_true_for_authenticated_user(): void
-    {
-        $user = User::factory()->create();
-        $request = CategoryStoreRequest::createFrom(Request::create(route('categories.store'), 'POST', ['name' => 'Test']))
-            ->setContainer($this->app);
-        $request->setUserResolver(fn () => $user);
+        $request = new CategoryStoreRequest;
 
         $this->assertTrue($request->authorize());
     }

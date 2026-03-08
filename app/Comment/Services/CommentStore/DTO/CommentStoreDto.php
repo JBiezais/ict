@@ -2,8 +2,11 @@
 
 namespace App\Comment\Services\CommentStore\DTO;
 
+use App\Comment\Database\Models\Comment;
 use App\Comment\Http\Requests\CommentStoreRequest;
 use App\Post\Database\Models\Post;
+use InvalidArgumentException;
+use RuntimeException;
 use Spatie\LaravelData\Data;
 
 class CommentStoreDto extends Data
@@ -19,15 +22,24 @@ class CommentStoreDto extends Data
     {
         $user = $request->user();
         if ($user === null) {
-            throw new \RuntimeException('Authenticated user is required.');
+            throw new RuntimeException('Authenticated user is required.');
         }
 
         $content = $request->validated('content');
         if (! is_string($content)) {
-            throw new \InvalidArgumentException('Content must be a string.');
+            throw new InvalidArgumentException('Content must be a string.');
         }
-        $parentId = $request->validated('parent_id');
-        $parentId = $parentId !== null && is_numeric($parentId) ? (int) $parentId : null;
+
+        $parentUuid = $request->validated('parent_uuid');
+        $parentId = null;
+        if (is_string($parentUuid) && $parentUuid !== '') {
+            $res = Comment::where('uuid', $parentUuid)->value('id');
+            if (is_int($res)) {
+                $parentId = $res;
+            } elseif (is_string($res) && ctype_digit($res)) {
+                $parentId = (int) $res;
+            }
+        }
 
         return new self(
             postId: $post->id,

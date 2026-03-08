@@ -1,15 +1,15 @@
-@props(['categories', 'selected' => [], 'name' => 'category_ids'])
+@props(['categories', 'selected' => [], 'name' => 'category_uuids'])
 
 @php
-    $categoriesList = $categories->map(fn($c) => ['id' => $c->id, 'name' => $c->name])->values()->all();
-    $selectedIds = collect(is_array($selected) ? $selected : [])
-        ->map(fn($v) => (int) $v)
+    $categoriesList = $categories->map(fn($c) => ['uuid' => $c->uuid, 'name' => $c->name])->values()->all();
+    $selectedUuids = collect(is_array($selected) ? $selected : [])
+        ->map(fn($v) => (string) $v)
         ->filter()
         ->all();
-    $selectedList = collect($selectedIds)
-        ->map(function ($id) use ($categories) {
-            $cat = $categories->firstWhere('id', $id);
-            return $cat ? ['id' => $cat->id, 'name' => $cat->name] : null;
+    $selectedList = collect($selectedUuids)
+        ->map(function ($uuid) use ($categories) {
+            $cat = $categories->firstWhere('uuid', $uuid);
+            return $cat ? ['uuid' => $cat->uuid, 'name' => $cat->name] : null;
         })
         ->filter()
         ->values()
@@ -25,8 +25,8 @@
     storeUrl: @js(route('categories.store')),
     get filteredSuggestions() {
         const q = this.inputValue.trim().toLowerCase();
-        const selectedIds = this.selectedTags.map(t => t.id);
-        const unselected = this.allCategories.filter(c => !selectedIds.includes(c.id));
+        const selectedUuids = this.selectedTags.map(t => t.uuid);
+        const unselected = this.allCategories.filter(c => !selectedUuids.includes(c.uuid));
         if (!q) return unselected.slice(0, 15);
         return unselected
             .filter(c => c.name.toLowerCase().includes(q))
@@ -47,7 +47,7 @@
         }
         const existing = this.allCategories.find(c => c.name === val);
         if (existing) {
-            if (!this.selectedTags.some(t => t.id === existing.id)) {
+            if (!this.selectedTags.some(t => t.uuid === existing.uuid)) {
                 this.selectedTags.push(existing);
             }
             this.inputValue = '';
@@ -72,7 +72,7 @@
             });
             if (res.ok) {
                 const data = await res.json();
-                const item = { id: data.id, name: data.name };
+                const item = { uuid: data.uuid, name: data.name };
                 this.selectedTags.push(item);
                 this.allCategories.push(item);
             }
@@ -93,7 +93,7 @@
 }">
     <div
         class="flex flex-wrap gap-1.5 min-h-[42px] p-2 border border-neutral-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-1 focus-within:ring-emerald-500 dark:focus-within:ring-emerald-400">
-        <template x-for="(tag, index) in selectedTags" :key="tag.id">
+        <template x-for="(tag, index) in selectedTags" :key="tag.uuid">
             <span
                 class="inline-flex items-center gap-1 pl-2.5 pr-1 py-0.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-zinc-700/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-zinc-600">
                 <span x-text="tag.name"></span>
@@ -130,14 +130,14 @@
                 <span x-text="`{{ __('Add') }} '` + inputValue.trim() + `'`"></span>
             </button>
         </template>
-        <template x-for="item in filteredSuggestions" :key="item.id">
+        <template x-for="item in filteredSuggestions" :key="item.uuid">
             <button type="button"
                 class="w-full px-4 py-2 text-left text-sm text-neutral-700 dark:text-zinc-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/80 focus:bg-neutral-50 dark:focus:bg-zinc-700/80 focus:outline-none"
                 role="option" @mousedown.prevent="addSuggestion(item)" x-text="item.name"></button>
         </template>
     </div>
 
-    <template x-for="tag in selectedTags" :key="tag.id">
-        <input type="hidden" name="{{ $name }}[]" :value="tag.id">
+    <template x-for="tag in selectedTags" :key="tag.uuid">
+        <input type="hidden" name="{{ $name }}[]" :value="tag.uuid">
     </template>
 </div>

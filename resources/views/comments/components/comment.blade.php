@@ -6,7 +6,28 @@
     $canReply = $depth < $maxDepth;
 @endphp
 
-<article id="comment-{{ $comment->id }}" x-data="{ editing: false, replyOpen: false, repliesOpen: false }"
+<article id="comment-{{ $comment->uuid }}" x-data="{
+    editing: false,
+    replyOpen: false,
+    repliesOpen: false,
+    repliesLoaded: false,
+    repliesHtml: '',
+    loadingReplies: false,
+    async toggleReplies() {
+        if (this.repliesLoaded) {
+            this.repliesOpen = !this.repliesOpen;
+        } else {
+            this.repliesOpen = true;
+            this.loadingReplies = true;
+            const url = $el.dataset.repliesUrl;
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            this.repliesHtml = await response.text();
+            this.repliesLoaded = true;
+            this.loadingReplies = false;
+        }
+    }
+}"
+    data-replies-url="{{ route('posts.comments.replies', [$post, $comment]) }}?depth={{ $depth + 1 }}"
     {{ $attributes->merge([
         'class' => $isReply ? 'mt-2' : 'py-3 border-b border-neutral-200 dark:border-zinc-700 last:border-b-0',
     ]) }}>
@@ -46,7 +67,7 @@
     @if ($comment->children_count > 0 || ($canReply && auth()->check()) || $isOwner)
         <div class="mt-1.5 flex items-center gap-4">
             @if ($comment->children_count > 0)
-                <button type="button" @click="repliesOpen = !repliesOpen"
+                <button type="button" @click="toggleReplies()"
                     class="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">
                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         x-show="!repliesOpen">
@@ -103,7 +124,7 @@
     @auth
         @if ($canReply)
             <div class="mt-2" x-show="replyOpen" x-cloak x-transition>
-                <x-comments::comment-form :post="$post" :parent-id="$comment->id" :rows="2" />
+                <x-comments::comment-form :post="$post" :parent-uuid="$comment->uuid" :rows="2" />
             </div>
         @endif
     @endauth
@@ -111,9 +132,10 @@
     @if ($comment->children_count > 0)
         <div x-show="repliesOpen" x-cloak x-transition
             class="mt-2 pl-6 md:pl-8 border-l-2 border-neutral-200 dark:border-zinc-600 space-y-5">
-            @foreach ($comment->children as $child)
-                <x-comments::comment :comment="$child" :post="$post" :depth="$depth + 1" :max-depth="$maxDepth" />
-            @endforeach
+            <template x-if="loadingReplies">
+                <p class="text-sm text-neutral-500 dark:text-zinc-400">{{ __('Loading replies...') }}</p>
+            </template>
+            <div x-show="!loadingReplies" x-html="repliesHtml"></div>
         </div>
     @endif
 </article>

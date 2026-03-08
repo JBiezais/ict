@@ -10,8 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
+ * @property string $uuid
  * @property int $post_id
  * @property int $user_id
  * @property int|null $parent_id
@@ -24,8 +26,13 @@ class Comment extends Model
     use HasFactory;
 
     /**
-     * Create a new factory instance for the model.
-     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'id',
+    ];
+
+    /**
      * @return Factory<Comment>
      */
     protected static function newFactory(): Factory
@@ -33,9 +40,21 @@ class Comment extends Model
         return CommentFactory::new();
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (Comment $model): void {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -46,8 +65,6 @@ class Comment extends Model
     ];
 
     /**
-     * Get the post that the comment belongs to.
-     *
      * @return BelongsTo<Post, $this>
      */
     public function post(): BelongsTo
@@ -56,8 +73,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the user that wrote the comment.
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -66,8 +81,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the parent comment (for replies).
-     *
      * @return BelongsTo<Comment, $this>
      */
     public function parent(): BelongsTo
@@ -76,8 +89,6 @@ class Comment extends Model
     }
 
     /**
-     * Get the child comments (replies).
-     *
      * @return HasMany<Comment, $this>
      */
     public function children(): HasMany

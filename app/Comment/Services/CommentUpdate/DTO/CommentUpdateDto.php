@@ -3,6 +3,7 @@
 namespace App\Comment\Services\CommentUpdate\DTO;
 
 use App\Comment\Http\Requests\CommentUpdateRequest;
+use InvalidArgumentException;
 use Spatie\LaravelData\Data;
 
 class CommentUpdateDto extends Data
@@ -15,7 +16,7 @@ class CommentUpdateDto extends Data
     {
         $content = $request->validated('content');
         if (! is_string($content)) {
-            throw new \InvalidArgumentException('Content must be a string.');
+            throw new InvalidArgumentException('Content must be a string.');
         }
 
         return new self(content: $content);

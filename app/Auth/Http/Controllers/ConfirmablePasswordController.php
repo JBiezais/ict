@@ -2,41 +2,27 @@
 
 namespace App\Auth\Http\Controllers;
 
+use App\Auth\Http\Requests\ConfirmPasswordRequest;
+use App\Auth\Services\ConfirmPassword\ConfirmPasswordService;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ConfirmablePasswordController extends Controller
 {
-    /**
-     * Show the confirm password view.
-     */
     public function show(): View
     {
         return view('auth.pages.confirm-password');
     }
 
-    /**
-     * Confirm the user's password.
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(ConfirmPasswordRequest $request, ConfirmPasswordService $confirmPasswordService): RedirectResponse
     {
         $user = $request->user();
         abort_if($user === null, 403);
 
-        if (! Auth::guard('web')->validate([
-            'email' => $user->email,
-            'password' => $request->password,
-        ])) {
-            throw ValidationException::withMessages([
-                'password' => __('auth.password'),
-            ]);
-        }
-
-        $request->session()->put('auth.password_confirmed_at', time());
+        $password = $request->validated('password');
+        abort_if(! is_string($password), 403);
+        $confirmPasswordService->execute($user, $password, $request);
 
         return redirect()->intended(route('my-posts.posts.index', absolute: false));
     }

@@ -25,11 +25,11 @@ class PostStoreRequestTest extends TestCase
 
         $this->assertEquals(['required', 'string', 'max:255'], $rules['title']);
         $this->assertEquals(['required', 'string'], $rules['content']);
-        $this->assertEquals(['nullable', 'array'], $rules['category_ids']);
-        $this->assertEquals(['integer', 'exists:categories,id'], $rules['category_ids.*']);
+        $this->assertEquals(['nullable', 'array'], $rules['category_uuids']);
+        $this->assertEquals(['uuid', 'exists:categories,uuid'], $rules['category_uuids.*']);
     }
 
-    public function test_category_ids_validation_accepts_array_of_integers(): void
+    public function test_category_uuids_validation_accepts_array_of_uuids(): void
     {
         $tech = \App\Category\Database\Models\Category::factory()->create(['name' => 'Tech']);
         $laravel = \App\Category\Database\Models\Category::factory()->create(['name' => 'Laravel']);
@@ -37,12 +37,12 @@ class PostStoreRequestTest extends TestCase
         $request = PostStoreRequest::create('/posts', 'POST', [
             'title' => 'Title',
             'content' => 'Content',
-            'category_ids' => [$tech->id, $laravel->id],
+            'category_uuids' => [$tech->uuid, $laravel->uuid],
         ]);
         $request->setContainer(app());
 
         $request->validateResolved();
 
-        $this->assertEqualsCanonicalizing([$tech->id, $laravel->id], $request->validated('category_ids'));
+        $this->assertEqualsCanonicalizing([$tech->uuid, $laravel->uuid], $request->validated('category_uuids'));
     }
 }

@@ -24,7 +24,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->count(2)->create(); // Other users' posts
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10);
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(3, $result->items);
@@ -41,7 +41,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $otherUser->id, 'title' => 'Other Post']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10);
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -54,7 +54,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->count(5)->create(['user_id' => $user->id]);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 2);
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(2, $result->items);
@@ -75,7 +75,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $user->id, 'title' => 'Laravel Eloquent', 'content' => 'Eloquent ORM.']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: 'Laravel');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(2, $result->items);
@@ -97,7 +97,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $user->id, 'title' => 'Ipsum', 'content' => 'Other content.']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: 'veni');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -114,7 +114,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $user->id, 'title' => 'Foo Bar Post', 'content' => 'Contains foo and bar.']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: 'foo & bar');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -139,7 +139,7 @@ class PostIndexServiceTest extends TestCase
             categoryIds: [$tech->id],
             includeUncategorized: true,
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(2, $result->items);
@@ -167,7 +167,7 @@ class PostIndexServiceTest extends TestCase
             categoryIds: [$tech->id],
             includeUncategorized: false,
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -189,7 +189,7 @@ class PostIndexServiceTest extends TestCase
             categoryIds: [],
             includeUncategorized: false,
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -208,7 +208,7 @@ class PostIndexServiceTest extends TestCase
             perPage: 10,
             dateFrom: '2024-01-01',
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -227,7 +227,7 @@ class PostIndexServiceTest extends TestCase
             perPage: 10,
             dateTo: '2024-12-31',
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -242,7 +242,7 @@ class PostIndexServiceTest extends TestCase
         $newest = Post::factory()->create(['user_id' => $user->id, 'title' => 'Newest', 'created_at' => '2024-12-01']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, sort: 'date_asc');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(3, $result->items);
@@ -260,7 +260,7 @@ class PostIndexServiceTest extends TestCase
         Comment::factory()->count(1)->create(['post_id' => $fewComments->id, 'parent_id' => null]);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, sort: 'comments');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(2, $result->items);
@@ -277,7 +277,7 @@ class PostIndexServiceTest extends TestCase
         Comment::factory()->count(1)->create(['post_id' => $fewComments->id, 'parent_id' => null]);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, sort: 'comments_asc');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(2, $result->items);
@@ -296,7 +296,7 @@ class PostIndexServiceTest extends TestCase
             perPage: 10,
             loadUser: true,
         );
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -309,7 +309,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $user->id, 'title' => 'Some Post', 'content' => 'Content.']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: '!!!@@@');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);
@@ -322,7 +322,7 @@ class PostIndexServiceTest extends TestCase
         Post::factory()->create(['user_id' => $user->id, 'title' => 'Some Post', 'content' => 'Content.']);
 
         $dto = new PostIndexDto(userId: $user->id, page: 1, perPage: 10, search: '   ');
-        $service = new PostIndexService;
+        $service = $this->app->make(PostIndexService::class);
         $result = $service->execute($dto);
 
         $this->assertCount(1, $result->items);

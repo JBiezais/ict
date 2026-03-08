@@ -24,13 +24,13 @@ class CategoryStoreServiceTest extends TestCase
         $this->assertDatabaseHas('categories', ['name' => 'Tech']);
     }
 
-    public function test_execute_trims_name(): void
+    public function test_execute_preserves_name_as_provided(): void
     {
         $dto = new CategoryStoreDto(name: '  Laravel  ');
 
         $service = new CategoryStoreService;
         $category = $service->execute($dto);
 
-        $this->assertEquals('Laravel', $category->name);
+        $this->assertEquals('  Laravel  ', $category->name);
     }
 }

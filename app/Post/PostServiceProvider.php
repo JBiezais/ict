@@ -5,8 +5,9 @@ namespace App\Post;
 use App\Category\Database\Models\Category;
 use App\Post\Console\SeedPostsCommand;
 use App\Post\Database\Models\Post;
-use App\Post\Policies\PostPolicy;
-use App\Post\View\Data\PostFilterBarData;
+use App\Post\Database\Policies\PostPolicy;
+use App\Post\Http\View\Data\PostFilterBarData;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
@@ -28,7 +29,7 @@ class PostServiceProvider extends ServiceProvider
 
         View::composer(
             ['posts.pages.browse', 'posts.pages.manage.index'],
-            function (\Illuminate\Contracts\View\View $view): void {
+            function (ViewContract $view): void {
                 $request = request();
                 $categories = Category::orderBy('name')->get();
                 $baseUrl = $request->routeIs('home')

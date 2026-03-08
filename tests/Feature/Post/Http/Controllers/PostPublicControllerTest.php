@@ -43,43 +43,35 @@ class PostPublicControllerTest extends TestCase
         $response->assertSee('This is the post content.');
     }
 
-    public function test_post_show_displays_nested_comments(): void
+    public function test_post_show_displays_top_level_comments_only_with_view_replies(): void
     {
         $post = Post::factory()->create(['title' => 'Post With Comments', 'content' => 'Content']);
         $topLevel = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => null, 'content' => 'Top level']);
-        $reply = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $topLevel->id, 'content' => 'Reply']);
-        $nestedReply = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $reply->id, 'content' => 'Nested reply']);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $topLevel->id, 'content' => 'Reply']);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $topLevel->id, 'content' => 'Another reply']);
 
         $response = $this->get(route('posts.show', $post));
 
         $response->assertOk();
         $response->assertSee('Top level');
-        $response->assertSee('Reply');
-        $response->assertSee('Nested reply');
+        $response->assertSee('View 2 replies', false);
+        $response->assertDontSee('Reply');
+        $response->assertDontSee('Another reply');
     }
 
-    public function test_post_show_loads_comments_up_to_max_nesting_level_5(): void
+    public function test_post_show_loads_only_root_comments_initially(): void
     {
         $post = Post::factory()->create(['title' => 'Deep Nesting Post', 'content' => 'Content']);
 
         $root = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => null, 'content' => 'Level 0']);
-        $c1 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $root->id, 'content' => 'Level 1']);
-        $c2 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $c1->id, 'content' => 'Level 2']);
-        $c3 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $c2->id, 'content' => 'Level 3']);
-        $c4 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $c3->id, 'content' => 'Level 4']);
-        $c5 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $c4->id, 'content' => 'Level 5']);
-        $c6 = Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $c5->id, 'content' => 'Level 6']);
+        Comment::factory()->create(['post_id' => $post->id, 'parent_id' => $root->id, 'content' => 'Level 1']);
 
         $response = $this->get(route('posts.show', $post));
 
         $response->assertOk();
         $response->assertSee('Level 0');
-        $response->assertSee('Level 1');
-        $response->assertSee('Level 2');
-        $response->assertSee('Level 3');
-        $response->assertSee('Level 4');
-        $response->assertSee('Level 5');
-        $response->assertSee('Level 6');
+        $response->assertSee('View 1 replies', false);
+        $response->assertDontSee('Level 1');
     }
 
     public function test_post_show_renders_view_replies_for_nested_comments(): void

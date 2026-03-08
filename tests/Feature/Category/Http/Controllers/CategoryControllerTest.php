@@ -28,7 +28,7 @@ class CategoryControllerTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJson(['name' => 'PHP']);
-        $response->assertJsonStructure(['id', 'name']);
+        $response->assertJsonStructure(['uuid', 'name']);
         $this->assertDatabaseHas('categories', ['name' => 'PHP']);
     }
 

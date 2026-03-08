@@ -9,6 +9,7 @@ class PostStoreService
 {
     public function execute(PostStoreDto $dto): void
     {
+        /** @var Post $post */
         $post = Post::query()->create([
             'user_id' => $dto->userId,
             'title' => $dto->title,

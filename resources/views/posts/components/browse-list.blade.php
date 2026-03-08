@@ -7,7 +7,7 @@
         @foreach ($posts as $post)
             <article
                 class="group py-6 border-b border-neutral-200 dark:border-zinc-700 last:border-b-0 last:pb-0 first:pt-0">
-                <a href="{{ route('posts.show', ['post' => $post->id]) }}" class="block cursor-pointer">
+                <a href="{{ route('posts.show', ['post' => $post->uuid]) }}" class="block cursor-pointer">
                     <x-posts::post-category-labels :categories="$post->categories" />
                     <div class="flex items-baseline gap-2 text-xs text-neutral-500 dark:text-zinc-400 mb-2">
                         @if ($post->userName)

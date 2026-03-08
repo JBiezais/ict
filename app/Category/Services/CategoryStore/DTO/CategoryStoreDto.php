@@ -3,6 +3,7 @@
 namespace App\Category\Services\CategoryStore\DTO;
 
 use App\Category\Http\Requests\CategoryStoreRequest;
+use InvalidArgumentException;
 use Spatie\LaravelData\Data;
 
 class CategoryStoreDto extends Data
@@ -15,7 +16,7 @@ class CategoryStoreDto extends Data
     {
         $name = $request->validated('name');
         if (! is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string.');
+            throw new InvalidArgumentException('Name must be a string.');
         }
 
         return new self(name: trim($name));
