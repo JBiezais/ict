@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\User\Database\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Post\Database\Models\Post>
@@ -20,6 +21,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => (string) Str::uuid(),
             'user_id' => User::factory(),
             'title' => fake()->sentence(4),
             'content' => fake()->paragraphs(3, true),

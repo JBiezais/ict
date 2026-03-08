@@ -1,58 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ICT Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel application with PostgreSQL, full-text search, and modern frontend tooling (Vite, Tailwind CSS, Alpine.js).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Step-by-Step Setup](#step-by-step-setup)
+- [Running the Application](#running-the-application)
+- [Database Seeding](#database-seeding)
+- [PostgreSQL Requirement](#postgresql-requirement)
+- [Troubleshooting](#troubleshooting)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Before starting, ensure you have:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Requirement   | Version / Notes                                      |
+|----------------|------------------------------------------------------|
+| PHP            | 8.2 or higher                                        |
+| Composer       | Latest                                               |
+| Node.js        | 20 or higher                                         |
+| Docker Desktop | For Laravel Sail (recommended setup)                 |
+| Git            | For cloning the repository                           |
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Quick Start
 
-### Premium Partners
+If you are familiar with Laravel Sail, run these commands:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+cp .env.example .env
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
+npm install && npm run build
+./vendor/bin/sail artisan db:seed
+```
 
-## Contributing
+Then open [http://localhost](http://localhost) in your browser.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Step-by-Step Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Clone or download the project
 
-## Security Vulnerabilities
+```bash
+git clone <repository-url> ict
+cd ict
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 2. Install PHP dependencies
+
+```bash
+composer install
+```
+
+### 3. Copy the environment file
+
+```bash
+cp .env.example .env
+```
+
+No changes to `.env` are required for a new setup. The `.env.example` file is pre-configured for PostgreSQL and Laravel Sail.
+
+### 4. Start Laravel Sail (PostgreSQL + PHP containers)
+
+```bash
+./vendor/bin/sail up -d
+```
+
+This starts the PostgreSQL database and the Laravel app container. Wait a few seconds for the database to be ready.
+
+### 5. Generate the application key
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+This populates `APP_KEY` in your `.env` file.
+
+### 6. Run database migrations
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+All database commands must run through Sail so that `DB_HOST=pgsql` (the Docker service name) resolves correctly.
+
+### 7. Install frontend dependencies
+
+```bash
+npm install
+```
+
+Or, to run inside the Sail container:
+
+```bash
+./vendor/bin/sail npm install
+```
+
+### 8. Build frontend assets
+
+```bash
+npm run build
+```
+
+Or:
+
+```bash
+./vendor/bin/sail npm run build
+```
+
+### 9. Seed the database (recommended)
+
+```bash
+./vendor/bin/sail artisan db:seed
+```
+
+Required for the homepage to show sample posts. Creates a test user and sample posts. See [Database Seeding](#database-seeding).
+
+---
+
+## Running the Application
+
+### With Sail (recommended)
+
+Sail serves the app automatically when the containers are running. Visit:
+
+- **Web app:** [http://localhost](http://localhost) (or `http://localhost:8080` if you set `APP_PORT=8080`)
+
+For local development with hot reload and queue processing, run the combined script inside Sail:
+
+```bash
+./vendor/bin/sail composer run dev
+```
+
+This starts the Vite dev server, queue listener, and log tail. The web app is still served by Sail's web server on port 80.
+
+---
+
+## Database Seeding
+
+To populate the database with sample data:
+
+```bash
+./vendor/bin/sail artisan db:seed
+```
+
+This creates:
+
+- A test user: `test@example.com` (check User factory for password)
+- 50 sample posts via `PostSeeder`
+
+---
+
+## PostgreSQL Requirement
+
+This project uses **PostgreSQL** and is not compatible with SQLite or MySQL. The search feature relies on PostgreSQL full-text search (`search_vector` on the `posts` table). Migrations will skip full-text search setup on non-PostgreSQL connections.
+
+---
+
+## Troubleshooting
+
+### Port already in use
+
+If port 80 or 5432 is taken, set in `.env`:
+
+```env
+APP_PORT=8080
+FORWARD_DB_PORT=5433
+```
+
+Then use `http://localhost:8080` and connect to PostgreSQL on port 5433 if needed from the host.
+
+### Permission denied on Linux
+
+If you get permission errors with Sail:
+
+1. Set `WWWUSER` and `WWWGROUP` in `.env` to your user and group IDs:
+   ```bash
+   id -u   # use as WWWUSER
+   id -g   # use as WWWGROUP
+   ```
+2. Avoid running Sail with `sudo`.
+
+### Database connection failed
+
+- Ensure Sail is running: `./vendor/bin/sail up -d`
+- Ensure `DB_HOST=pgsql` when running commands through Sail (for hostname resolution inside Docker)
+- If running `php artisan` directly on the host (without Sail), use `DB_HOST=127.0.0.1` and expose the DB port (e.g. `FORWARD_DB_PORT=5432`)
+
+### Sail command not found
+
+Use the full path:
+
+```bash
+./vendor/bin/sail up -d
+```
+
+Or add an alias:
+
+```bash
+alias sail='./vendor/bin/sail'
+```
+
+---
 
 ## License
 
