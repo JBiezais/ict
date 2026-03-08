@@ -48,7 +48,7 @@ class CommentController extends Controller
         return redirect()
             ->back()
             ->with('status', __('Comment added.'))
-            ->withFragment('comment-'.$comment->id);
+            ->withFragment('comment-'.$comment->uuid);
     }
 
     public function update(
@@ -63,7 +63,7 @@ class CommentController extends Controller
         return redirect()
             ->back()
             ->with('status', __('Comment updated.'))
-            ->withFragment('comment-'.$comment->id);
+            ->withFragment('comment-'.$comment->uuid);
     }
 
     public function destroy(

@@ -118,7 +118,7 @@ class PostControllerTest extends TestCase
         $response = $this->actingAs($user)->post(route('my-posts.posts.store'), [
             'title' => 'Post With Categories',
             'content' => 'Content',
-            'category_ids' => [$tech->id, $laravel->id, $php->id],
+            'category_uuids' => [$tech->uuid, $laravel->uuid, $php->uuid],
         ]);
 
         $response->assertRedirect(route('my-posts.posts.index'));
@@ -201,7 +201,7 @@ class PostControllerTest extends TestCase
         $response = $this->actingAs($user)->put(route('my-posts.posts.update', $post), [
             'title' => $post->title,
             'content' => $post->content,
-            'category_ids' => [$tech->id, $laravel->id, $php->id],
+            'category_uuids' => [$tech->uuid, $laravel->uuid, $php->uuid],
         ]);
 
         $response->assertRedirect(route('my-posts.posts.index'));

@@ -24,11 +24,11 @@ readonly class ValidCommentDepthRule implements ValidationRule
             return;
         }
 
-        if (! is_numeric($value)) {
+        if (! is_string($value) || $value === '') {
             return;
         }
 
-        $comment = Comment::find((int) $value);
+        $comment = Comment::where('uuid', $value)->first();
         if ($comment === null || $comment->post_id !== $this->post->id) {
             $fail(__('The selected comment is invalid.'));
 

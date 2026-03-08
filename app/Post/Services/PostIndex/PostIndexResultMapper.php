@@ -19,13 +19,12 @@ class PostIndexResultMapper
 
         $items = $collection
             ->map(fn (Post $post) => new PostDto(
-                id: $post->id,
+                uuid: $post->uuid,
                 title: $post->title,
                 content: $post->content,
-                userId: $post->user_id,
                 createdAt: $post->created_at,
                 commentsCount: $post->comments_count,
-                categories: $post->categories,
+                categories: $post->categories->map(fn ($c) => (object) ['uuid' => $c->uuid, 'name' => $c->name]),
                 userName: $post->relationLoaded('user') ? $post->user?->name : null,
             ))
             ->values()

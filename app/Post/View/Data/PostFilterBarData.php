@@ -12,8 +12,8 @@ use Spatie\LaravelData\Data;
 class PostFilterBarData extends Data
 {
     public function __construct(
-        /** @var list<int> */
-        public readonly array $selectedCategoryIds,
+        /** @var list<string> */
+        public readonly array $selectedCategoryUuids,
         public readonly bool $includeUncategorized,
         public readonly string $dateFrom,
         public readonly string $dateTo,
@@ -25,15 +25,15 @@ class PostFilterBarData extends Data
     ) {}
 
     /**
-     * @return array{category_ids: list<int>, include_uncategorized: bool, date_from: string|null, date_to: string|null, sort: string, search: string|null}
+     * @return array{category_uuids: list<string>, include_uncategorized: bool, date_from: string|null, date_to: string|null, sort: string, search: string|null}
      */
     public static function currentFiltersFromRequest(Request $request): array
     {
-        $categoryIds = $request->input('category_ids', []);
-        $categoryIds = is_array($categoryIds) ? $categoryIds : [];
+        $categoryUuids = $request->input('category_uuids', []);
+        $categoryUuids = is_array($categoryUuids) ? $categoryUuids : [];
 
         return [
-            'category_ids' => self::parseCategoryIds($categoryIds),
+            'category_uuids' => self::parseCategoryUuids($categoryUuids),
             'include_uncategorized' => self::parseIncludeUncategorized($request->input('include_uncategorized', true)),
             'date_from' => self::parseDate($request->input('date_from')),
             'date_to' => self::parseDate($request->input('date_to')),
@@ -45,15 +45,15 @@ class PostFilterBarData extends Data
 
     /**
      * @param  array<mixed>  $values
-     * @return list<int>
+     * @return list<string>
      */
-    private static function parseCategoryIds(array $values): array
+    private static function parseCategoryUuids(array $values): array
     {
         $result = [];
         foreach ($values as $v) {
-            $id = is_numeric($v) ? (int) $v : 0;
-            if ($id !== 0) {
-                $result[] = $id;
+            $uuid = is_string($v) ? trim($v) : '';
+            if ($uuid !== '') {
+                $result[] = $uuid;
             }
         }
 
@@ -87,24 +87,24 @@ class PostFilterBarData extends Data
     }
 
     /**
-     * @param  array{category_ids?: array<int|string>, include_uncategorized?: bool|string, date_from?: string|null, date_to?: string|null, sort?: string, search?: string|null, filter_applied?: bool}  $currentFilters
+     * @param  array{category_uuids?: array<string>, include_uncategorized?: bool|string, date_from?: string|null, date_to?: string|null, sort?: string, search?: string|null, filter_applied?: bool}  $currentFilters
      * @param  Collection<int, Category>  $categories
      */
     public static function fromFiltersAndCategories(array $currentFilters, Collection $categories): self
     {
-        $categoryIdsRaw = (array) ($currentFilters['category_ids'] ?? []);
-        /** @var list<int> $categoryIds */
-        $categoryIds = collect($categoryIdsRaw)->map(fn (mixed $v): int => (int) $v)->filter()->values()->all();
-        /** @var list<int> $allCategoryIds */
-        $allCategoryIds = $categories->pluck('id')->map(fn (mixed $id): int => is_int($id) ? $id : (int) (is_numeric($id) ? $id : 0))->all();
+        $categoryUuidsRaw = (array) ($currentFilters['category_uuids'] ?? []);
+        /** @var list<string> $categoryUuids */
+        $categoryUuids = collect($categoryUuidsRaw)->map(fn (mixed $v): string => (string) $v)->filter()->values()->all();
+        /** @var list<string> $allCategoryUuids */
+        $allCategoryUuids = $categories->pluck('uuid')->all();
         $includeUncategorized = (bool) filter_var($currentFilters['include_uncategorized'] ?? '1', FILTER_VALIDATE_BOOLEAN);
         $filterApplied = ! empty($currentFilters['filter_applied']);
         // Only auto-select all categories when user explicitly unchecked everything including Uncategorized (reset to default)
-        $nothingSelected = $filterApplied && empty($categoryIds) && ! $includeUncategorized;
-        $onlyUncategorizedChosen = $filterApplied && empty($categoryIds) && $includeUncategorized;
-        $selectedCategoryIds = $nothingSelected
-            ? $allCategoryIds
-            : ($onlyUncategorizedChosen ? [] : (empty($categoryIds) ? $allCategoryIds : $categoryIds));
+        $nothingSelected = $filterApplied && empty($categoryUuids) && ! $includeUncategorized;
+        $onlyUncategorizedChosen = $filterApplied && empty($categoryUuids) && $includeUncategorized;
+        $selectedCategoryUuids = $nothingSelected
+            ? $allCategoryUuids
+            : ($onlyUncategorizedChosen ? [] : (empty($categoryUuids) ? $allCategoryUuids : $categoryUuids));
         if ($nothingSelected) {
             $includeUncategorized = true;
         }
@@ -116,7 +116,7 @@ class PostFilterBarData extends Data
         $dateRangeValue = self::formatDateRangeValue($dateFrom, $dateTo);
 
         $hasActiveFilters =
-            count($selectedCategoryIds) < count($allCategoryIds)
+            count($selectedCategoryUuids) < count($allCategoryUuids)
             || ! $includeUncategorized
             || $dateFrom !== ''
             || $dateTo !== ''
@@ -124,7 +124,7 @@ class PostFilterBarData extends Data
         $hasActiveSort = $sort !== 'date';
 
         return new self(
-            selectedCategoryIds: $selectedCategoryIds,
+            selectedCategoryUuids: $selectedCategoryUuids,
             includeUncategorized: $includeUncategorized,
             dateFrom: $dateFrom,
             dateTo: $dateTo,

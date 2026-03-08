@@ -6,7 +6,7 @@
     $canReply = $depth < $maxDepth;
 @endphp
 
-<article id="comment-{{ $comment->id }}"
+<article id="comment-{{ $comment->uuid }}"
     x-data="{
         editing: false,
         replyOpen: false,
@@ -125,7 +125,7 @@
     @auth
         @if ($canReply)
             <div class="mt-2" x-show="replyOpen" x-cloak x-transition>
-                <x-comments::comment-form :post="$post" :parent-id="$comment->id" :rows="2" />
+                <x-comments::comment-form :post="$post" :parent-uuid="$comment->uuid" :rows="2" />
             </div>
         @endif
     @endauth

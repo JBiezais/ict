@@ -18,7 +18,7 @@ class PostFilterBarDataTest extends TestCase
 
         $filters = PostFilterBarData::currentFiltersFromRequest($request);
 
-        $this->assertSame([], $filters['category_ids']);
+        $this->assertSame([], $filters['category_uuids']);
         $this->assertTrue($filters['include_uncategorized']);
         $this->assertNull($filters['date_from']);
         $this->assertNull($filters['date_to']);
@@ -26,25 +26,28 @@ class PostFilterBarDataTest extends TestCase
         $this->assertNull($filters['search']);
     }
 
-    public function test_current_filters_from_request_parses_category_ids(): void
+    public function test_current_filters_from_request_parses_category_uuids(): void
     {
+        $tech = Category::factory()->create(['name' => 'Tech']);
+        $php = Category::factory()->create(['name' => 'PHP']);
+
         $request = Request::create('/?'.http_build_query([
-            'category_ids' => [1, 2, '3', 'abc', 0],
+            'category_uuids' => [$tech->uuid, $php->uuid, ''],
         ]));
 
         $filters = PostFilterBarData::currentFiltersFromRequest($request);
 
-        $this->assertSame([1, 2, 3], $filters['category_ids']);
+        $this->assertEqualsCanonicalizing([$tech->uuid, $php->uuid], $filters['category_uuids']);
     }
 
-    public function test_current_filters_from_request_handles_non_array_category_ids(): void
+    public function test_current_filters_from_request_handles_non_array_category_uuids(): void
     {
-        $request = Request::create('/?category_ids=1');
-        $request->query->set('category_ids', 'scalar');
+        $request = Request::create('/?category_uuids=1');
+        $request->query->set('category_uuids', 'scalar');
 
         $filters = PostFilterBarData::currentFiltersFromRequest($request);
 
-        $this->assertSame([], $filters['category_ids']);
+        $this->assertSame([], $filters['category_uuids']);
     }
 
     public function test_current_filters_from_request_parse_include_uncategorized_false(): void
@@ -142,7 +145,7 @@ class PostFilterBarDataTest extends TestCase
 
         $data = PostFilterBarData::fromFiltersAndCategories([], $categories);
 
-        $this->assertEqualsCanonicalizing([$tech->id, $php->id], $data->selectedCategoryIds);
+        $this->assertEqualsCanonicalizing([$tech->uuid, $php->uuid], $data->selectedCategoryUuids);
         $this->assertTrue($data->includeUncategorized);
         $this->assertFalse($data->hasActiveFilters);
         $this->assertFalse($data->hasActiveSort);
@@ -156,10 +159,10 @@ class PostFilterBarDataTest extends TestCase
         $categories = Category::orderBy('name')->get();
 
         $data = PostFilterBarData::fromFiltersAndCategories([
-            'category_ids' => [$tech->id, $php->id],
+            'category_uuids' => [$tech->uuid, $php->uuid],
         ], $categories);
 
-        $this->assertEqualsCanonicalizing([$tech->id, $php->id], $data->selectedCategoryIds);
+        $this->assertEqualsCanonicalizing([$tech->uuid, $php->uuid], $data->selectedCategoryUuids);
         $this->assertTrue($data->hasActiveFilters);
     }
 
@@ -182,12 +185,12 @@ class PostFilterBarDataTest extends TestCase
         $categories = Category::orderBy('name')->get();
 
         $data = PostFilterBarData::fromFiltersAndCategories([
-            'category_ids' => [],
+            'category_uuids' => [],
             'include_uncategorized' => true,
             'filter_applied' => true,
         ], $categories);
 
-        $this->assertSame([], $data->selectedCategoryIds);
+        $this->assertSame([], $data->selectedCategoryUuids);
         $this->assertTrue($data->includeUncategorized);
         $this->assertTrue($data->hasActiveFilters);
     }
@@ -199,12 +202,12 @@ class PostFilterBarDataTest extends TestCase
         $categories = Category::orderBy('name')->get();
 
         $data = PostFilterBarData::fromFiltersAndCategories([
-            'category_ids' => [],
+            'category_uuids' => [],
             'include_uncategorized' => false,
             'filter_applied' => true,
         ], $categories);
 
-        $this->assertEqualsCanonicalizing([$tech->id, $php->id], $data->selectedCategoryIds);
+        $this->assertEqualsCanonicalizing([$tech->uuid, $php->uuid], $data->selectedCategoryUuids);
         $this->assertTrue($data->includeUncategorized);
         $this->assertFalse($data->hasActiveFilters);
     }

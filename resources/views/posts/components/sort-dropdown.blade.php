@@ -22,8 +22,8 @@
             @if ($filterBarData->hasActiveFilters)
                 <input type="hidden" name="filter_applied" value="1">
             @endif
-            @foreach ($filterBarData->selectedCategoryIds as $id)
-                <input type="hidden" name="category_ids[]" value="{{ $id }}">
+            @foreach ($filterBarData->selectedCategoryUuids as $uuid)
+                <input type="hidden" name="category_uuids[]" value="{{ $uuid }}">
             @endforeach
             <input type="hidden" name="include_uncategorized"
                 value="{{ $filterBarData->includeUncategorized ? '1' : '0' }}">

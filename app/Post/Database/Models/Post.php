@@ -15,8 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
+ * @property string $uuid
  * @property int $user_id
  * @property string $title
  * @property string $content
@@ -29,11 +31,32 @@ class Post extends Model
     use HasFactory;
 
     /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'id',
+    ];
+
+    /**
      * @return Factory<Post>
      */
     protected static function newFactory(): Factory
     {
         return PostFactory::new();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Post $model): void {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     /**

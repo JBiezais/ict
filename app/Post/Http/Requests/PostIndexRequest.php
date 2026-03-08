@@ -14,8 +14,8 @@ class PostIndexRequest extends PostFilterRequest
         return [
             'page' => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'category_ids' => ['sometimes', 'array'],
-            'category_ids.*' => ['integer', 'exists:categories,id'],
+            'category_uuids' => ['sometimes', 'array'],
+            'category_uuids.*' => ['uuid', 'exists:categories,uuid'],
             'date_from' => ['nullable', 'date'],
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
             'sort' => ['sometimes', 'string', 'in:date,date_asc,comments,comments_asc'],

@@ -15,6 +15,6 @@ class CategoryController extends Controller
         $dto = CategoryStoreDto::fromRequest($request);
         $category = $categoryStoreService->execute($dto);
 
-        return response()->json(['id' => $category->id, 'name' => $category->name], 201);
+        return response()->json(['uuid' => $category->uuid, 'name' => $category->name], 201);
     }
 }

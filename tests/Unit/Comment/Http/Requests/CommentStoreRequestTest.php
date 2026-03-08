@@ -39,13 +39,13 @@ class CommentStoreRequestTest extends TestCase
         $rules = $request->rules();
 
         $this->assertEquals(['required', 'string', 'max:2000'], $rules['content']);
-        $this->assertArrayHasKey('parent_id', $rules);
-        $this->assertContains('nullable', $rules['parent_id']);
-        $this->assertContains('integer', $rules['parent_id']);
-        $existsRule = collect($rules['parent_id'])->first(fn ($r) => is_string($r) && str_contains($r, 'exists'));
+        $this->assertArrayHasKey('parent_uuid', $rules);
+        $this->assertContains('nullable', $rules['parent_uuid']);
+        $this->assertContains('uuid', $rules['parent_uuid']);
+        $existsRule = collect($rules['parent_uuid'])->first(fn ($r) => is_string($r) && str_contains($r, 'exists'));
         $this->assertNotNull($existsRule);
-        $this->assertStringContainsString('exists:comments,id', $existsRule);
-        $validCommentParentRule = collect($rules['parent_id'])->first(fn ($r) => $r instanceof ValidCommentDepthRule);
+        $this->assertStringContainsString('exists:comments,uuid', $existsRule);
+        $validCommentParentRule = collect($rules['parent_uuid'])->first(fn ($r) => $r instanceof ValidCommentDepthRule);
         $this->assertInstanceOf(ValidCommentDepthRule::class, $validCommentParentRule);
     }
 
@@ -55,7 +55,7 @@ class CommentStoreRequestTest extends TestCase
 
         $request = CommentStoreRequest::create('/posts/1/comments', 'POST', [
             'content' => 'Test content',
-            'parent_id' => (string) $comment->id,
+            'parent_uuid' => $comment->uuid,
         ]);
         $request->setContainer(app());
         $request->setRouteResolver(function () {
@@ -70,13 +70,13 @@ class CommentStoreRequestTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    public function test_parent_id_rule_skips_check_when_value_is_not_numeric(): void
+    public function test_parent_uuid_rule_fails_when_value_is_invalid_uuid(): void
     {
         $post = Post::factory()->create();
 
         $request = CommentStoreRequest::create('/posts/'.$post->id.'/comments', 'POST', [
             'content' => 'Test content',
-            'parent_id' => 'not-numeric',
+            'parent_uuid' => '00000000-0000-0000-0000-000000000000',
         ]);
         $request->setContainer(app());
         $request->setRouteResolver(function () use ($post) {
@@ -101,7 +101,7 @@ class CommentStoreRequestTest extends TestCase
 
         $request = CommentStoreRequest::create('/posts/'.$post->id.'/comments', 'POST', [
             'content' => 'Reply at max depth',
-            'parent_id' => (string) $current->id,
+            'parent_uuid' => $current->uuid,
         ]);
         $request->setContainer(app());
         $request->setRouteResolver(function () use ($post) {
@@ -124,7 +124,7 @@ class CommentStoreRequestTest extends TestCase
 
         $request = CommentStoreRequest::create('/posts/'.$post->id.'/comments', 'POST', [
             'content' => 'Valid reply',
-            'parent_id' => (string) $child->id,
+            'parent_uuid' => $child->uuid,
         ]);
         $request->setContainer(app());
         $request->setRouteResolver(function () use ($post) {

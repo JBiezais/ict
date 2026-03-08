@@ -2,7 +2,6 @@
 
 namespace App\Post\Services\PostIndex\DTO;
 
-use App\Category\Database\Models\Category;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\MapInputName;
@@ -12,14 +11,15 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class PostDto extends Data
 {
+    /**
+     * @param  Collection<int, object{uuid: string, name: string}>  $categories
+     */
     public function __construct(
-        public readonly int $id,
+        public readonly string $uuid,
         public readonly string $title,
         public readonly string $content,
-        public readonly int $userId,
         public readonly ?CarbonInterface $createdAt,
         public readonly int $commentsCount,
-        /** @var Collection<int, Category> */
         public readonly Collection $categories,
         public readonly ?string $userName = null,
     ) {}

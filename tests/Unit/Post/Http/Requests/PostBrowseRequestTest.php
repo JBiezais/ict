@@ -26,7 +26,7 @@ class PostBrowseRequestTest extends TestCase
         $rules = $request->rules();
 
         $this->assertEquals(['sometimes', 'integer', 'min:1'], $rules['page']);
-        $this->assertEquals(['sometimes', 'array'], $rules['category_ids']);
+        $this->assertEquals(['sometimes', 'array'], $rules['category_uuids']);
         $this->assertEquals(['nullable', 'date'], $rules['date_from']);
         $this->assertEquals(['nullable', 'date', 'after_or_equal:date_from'], $rules['date_to']);
         $this->assertEquals(['sometimes', 'string', 'in:date,date_asc,comments,comments_asc'], $rules['sort']);

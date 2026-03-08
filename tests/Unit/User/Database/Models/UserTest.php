@@ -7,6 +7,7 @@ use App\Post\Database\Models\Post;
 use App\User\Database\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -24,7 +25,7 @@ class UserTest extends TestCase
     {
         $user = new User;
 
-        $this->assertEquals(['password', 'remember_token'], $user->getHidden());
+        $this->assertEquals(['id', 'password', 'remember_token'], $user->getHidden());
     }
 
     public function test_casts_include_email_verified_at_and_password(): void
@@ -65,5 +66,33 @@ class UserTest extends TestCase
         Comment::factory()->count(2)->create(['user_id' => $user->id]);
 
         $this->assertCount(2, $user->comments);
+    }
+
+    public function test_uuid_is_auto_generated_on_create(): void
+    {
+        $user = User::factory()->create();
+
+        $this->assertNotEmpty($user->uuid);
+        $this->assertTrue(Str::isUuid($user->uuid));
+    }
+
+    public function test_get_route_key_name_returns_uuid(): void
+    {
+        $user = new User;
+
+        $this->assertSame('uuid', $user->getRouteKeyName());
+    }
+
+    public function test_uuid_is_not_overwritten_when_provided(): void
+    {
+        $presetUuid = Str::uuid()->toString();
+        $user = new User;
+        $user->uuid = $presetUuid;
+        $user->name = 'Test User';
+        $user->email = 'test@example.com';
+        $user->password = Hash::make('password');
+        $user->save();
+
+        $this->assertSame($presetUuid, $user->fresh()->uuid);
     }
 }

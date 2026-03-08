@@ -2,6 +2,7 @@
 
 namespace App\Post\Services\PostStore\DTO;
 
+use App\Category\Database\Models\Category;
 use App\Post\Http\Requests\PostStoreRequest;
 use InvalidArgumentException;
 use RuntimeException;
@@ -30,18 +31,17 @@ class PostStoreDto extends Data
             throw new InvalidArgumentException('Title and content must be strings.');
         }
 
-        $categoryIds = $request->validated('category_ids') ?? [];
-        $categoryIds = array_values(array_filter(array_map(
-            /** @phpstan-ignore cast.int */
-            fn (mixed $v): int => (int) $v,
-            is_array($categoryIds) ? $categoryIds : []
-        )));
+        $categoryUuids = $request->validated('category_uuids') ?? [];
+        $categoryUuids = is_array($categoryUuids) ? array_filter(array_map('strval', $categoryUuids)) : [];
+        $categoryIds = empty($categoryUuids)
+            ? []
+            : Category::whereIn('uuid', $categoryUuids)->pluck('id')->all();
 
         return new self(
             userId: $user->id,
             title: $title,
             content: $content,
-            categoryIds: $categoryIds,
+            categoryIds: array_values($categoryIds),
         );
     }
 }

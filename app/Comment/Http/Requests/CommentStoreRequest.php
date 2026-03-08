@@ -22,10 +22,10 @@ class CommentStoreRequest extends FormRequest
 
         return [
             'content' => ['required', 'string', 'max:2000'],
-            'parent_id' => [
+            'parent_uuid' => [
                 'nullable',
-                'integer',
-                'exists:comments,id',
+                'uuid',
+                'exists:comments,uuid',
                 new ValidCommentDepthRule($post),
             ],
         ];

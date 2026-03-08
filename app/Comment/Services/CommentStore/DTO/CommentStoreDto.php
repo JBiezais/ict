@@ -2,6 +2,7 @@
 
 namespace App\Comment\Services\CommentStore\DTO;
 
+use App\Comment\Database\Models\Comment;
 use App\Comment\Http\Requests\CommentStoreRequest;
 use App\Post\Database\Models\Post;
 use InvalidArgumentException;
@@ -28,8 +29,11 @@ class CommentStoreDto extends Data
         if (! is_string($content)) {
             throw new InvalidArgumentException('Content must be a string.');
         }
-        $parentId = $request->validated('parent_id');
-        $parentId = is_numeric($parentId) ? (int) $parentId : null;
+
+        $parentUuid = $request->validated('parent_uuid');
+        $parentId = is_string($parentUuid) && $parentUuid !== ''
+            ? Comment::where('uuid', $parentUuid)->value('id')
+            : null;
 
         return new self(
             postId: $post->id,

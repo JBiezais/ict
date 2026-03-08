@@ -2,6 +2,7 @@
 
 namespace App\Post\Services\PostIndex\DTO;
 
+use App\Category\Database\Models\Category;
 use App\Post\Http\Requests\PostBrowseRequest;
 use App\Post\Http\Requests\PostIndexRequest;
 use Spatie\LaravelData\Data;
@@ -30,7 +31,7 @@ class PostIndexDto extends Data
             throw new \RuntimeException('Authenticated user is required.');
         }
 
-        $categoryIds = self::parseCategoryIds(is_array($request->validated('category_ids', [])) ? $request->validated('category_ids', []) : []);
+        $categoryIds = self::resolveCategoryUuidsToIds(is_array($request->validated('category_uuids', [])) ? $request->validated('category_uuids', []) : []);
         $includeUncategorized = self::parseIncludeUncategorized($request->validated('include_uncategorized', true));
         $filterApplied = filter_var($request->validated('filter_applied', false), FILTER_VALIDATE_BOOLEAN);
 
@@ -50,7 +51,7 @@ class PostIndexDto extends Data
 
     public static function fromBrowseRequest(PostBrowseRequest $request): self
     {
-        $categoryIds = self::parseCategoryIds(is_array($request->validated('category_ids', [])) ? $request->validated('category_ids', []) : []);
+        $categoryIds = self::resolveCategoryUuidsToIds(is_array($request->validated('category_uuids', [])) ? $request->validated('category_uuids', []) : []);
         $includeUncategorized = self::parseIncludeUncategorized($request->validated('include_uncategorized', true));
         $filterApplied = filter_var($request->validated('filter_applied', false), FILTER_VALIDATE_BOOLEAN);
 
@@ -83,17 +84,14 @@ class PostIndexDto extends Data
      * @param  array<mixed>  $values
      * @return list<int>
      */
-    private static function parseCategoryIds(array $values): array
+    private static function resolveCategoryUuidsToIds(array $values): array
     {
-        $result = [];
-        foreach ($values as $value) {
-            $id = is_numeric($value) ? (int) $value : 0;
-            if ($id !== 0) {
-                $result[] = $id;
-            }
+        $uuids = array_values(array_filter(array_map('strval', $values)));
+        if (empty($uuids)) {
+            return [];
         }
 
-        return $result;
+        return Category::whereIn('uuid', $uuids)->pluck('id')->all();
     }
 
     private static function parseDate(mixed $value): ?string

@@ -22,8 +22,8 @@
 
         <div class="mt-4">
             <x-form.input-label :value="__('Categories')" />
-            <x-form.category-tag-input :categories="$categories" :selected="old('category_ids', $post->categories->pluck('id')->all())" />
-            <x-form.input-error :messages="$errors->get('category_ids')" class="mt-2" />
+            <x-form.category-tag-input :categories="$categories" :selected="old('category_uuids', $post->categories->pluck('uuid')->all())" />
+            <x-form.input-error :messages="$errors->get('category_uuids')" class="mt-2" />
         </div>
 
         <div class="mt-6 flex items-center gap-4">

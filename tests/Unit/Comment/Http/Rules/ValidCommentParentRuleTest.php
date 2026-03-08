@@ -20,8 +20,8 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => null],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => null],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertFalse($validator->fails());
@@ -33,8 +33,8 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule(null);
 
         $validator = Validator::make(
-            ['parent_id' => (string) $comment->id],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => $comment->uuid],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertFalse($validator->fails());
@@ -46,21 +46,34 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule('not-a-post-model');
 
         $validator = Validator::make(
-            ['parent_id' => (string) $comment->id],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => $comment->uuid],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertFalse($validator->fails());
     }
 
-    public function test_passes_when_value_is_not_numeric(): void
+    public function test_passes_when_value_is_empty_string(): void
     {
         $post = Post::factory()->create();
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => 'not-numeric'],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => ''],
+            ['parent_uuid' => [$rule]]
+        );
+
+        $this->assertFalse($validator->fails());
+    }
+
+    public function test_passes_when_value_is_not_string(): void
+    {
+        $post = Post::factory()->create();
+        $rule = new ValidCommentDepthRule($post);
+
+        $validator = Validator::make(
+            ['parent_uuid' => 123],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertFalse($validator->fails());
@@ -72,14 +85,14 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => '99999'],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => '00000000-0000-0000-0000-000000000099'],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertTrue($validator->fails());
         $this->assertEquals(
             __('The selected comment is invalid.'),
-            $validator->errors()->first('parent_id')
+            $validator->errors()->first('parent_uuid')
         );
     }
 
@@ -91,14 +104,14 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => (string) $comment->id],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => $comment->uuid],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertTrue($validator->fails());
         $this->assertEquals(
             __('The selected comment is invalid.'),
-            $validator->errors()->first('parent_id')
+            $validator->errors()->first('parent_uuid')
         );
     }
 
@@ -112,14 +125,14 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => (string) $current->id],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => $current->uuid],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertTrue($validator->fails());
         $this->assertEquals(
             __('Maximum nesting level reached. You cannot reply to this comment.'),
-            $validator->errors()->first('parent_id')
+            $validator->errors()->first('parent_uuid')
         );
     }
 
@@ -131,8 +144,8 @@ class ValidCommentParentRuleTest extends TestCase
         $rule = new ValidCommentDepthRule($post);
 
         $validator = Validator::make(
-            ['parent_id' => (string) $child->id],
-            ['parent_id' => [$rule]]
+            ['parent_uuid' => $child->uuid],
+            ['parent_uuid' => [$rule]]
         );
 
         $this->assertFalse($validator->fails());

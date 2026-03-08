@@ -2,6 +2,7 @@
 
 namespace App\Post\Services\PostUpdate\DTO;
 
+use App\Category\Database\Models\Category;
 use App\Post\Database\Models\Post;
 use App\Post\Http\Requests\PostUpdateRequest;
 use InvalidArgumentException;
@@ -25,18 +26,17 @@ class PostUpdateDto extends Data
             throw new InvalidArgumentException('Title and content must be strings.');
         }
 
-        $categoryIds = $request->validated('category_ids') ?? [];
-        $categoryIds = array_values(array_filter(array_map(
-            /** @phpstan-ignore cast.int */
-            fn (mixed $value): int => (int) $value,
-            is_array($categoryIds) ? $categoryIds : []
-        )));
+        $categoryUuids = $request->validated('category_uuids') ?? [];
+        $categoryUuids = is_array($categoryUuids) ? array_filter(array_map('strval', $categoryUuids)) : [];
+        $categoryIds = empty($categoryUuids)
+            ? []
+            : Category::whereIn('uuid', $categoryUuids)->pluck('id')->all();
 
         return new self(
             postId: $post->id,
             title: $title,
             content: $content,
-            categoryIds: $categoryIds,
+            categoryIds: array_values($categoryIds),
         );
     }
 }

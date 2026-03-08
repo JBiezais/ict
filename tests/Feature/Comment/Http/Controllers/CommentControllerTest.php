@@ -50,7 +50,7 @@ class CommentControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('posts.comments.store', $post), [
             'content' => 'Reply to parent comment.',
-            'parent_id' => (string) $parent->id,
+            'parent_uuid' => $parent->uuid,
         ]);
 
         $response->assertRedirect();
@@ -69,10 +69,10 @@ class CommentControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('posts.comments.store', $post), [
             'content' => 'Invalid reply.',
-            'parent_id' => (string) $commentOnOtherPost->id,
+            'parent_uuid' => $commentOnOtherPost->uuid,
         ]);
 
-        $response->assertSessionHasErrors(['parent_id']);
+        $response->assertSessionHasErrors(['parent_uuid']);
     }
 
     public function test_update_succeeds_for_owner(): void
